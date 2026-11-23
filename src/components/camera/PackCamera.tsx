@@ -371,7 +371,7 @@ export const PackCamera: React.FC<PackCameraProps> = ({
           playsInline
           muted
           onLoadedMetadata={() => {
-            videoRef.current?.play().catch(() => {});
+            videoRef.current?.play().catch(() => { });
           }}
           style={{
             width: '100%',

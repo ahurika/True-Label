@@ -143,6 +143,47 @@ export default function ReadingPackPage() {
     },
   ];
 
+  const handleLoadSample = (sampleType: 'paracetamol' | 'semovita') => {
+    if (sampleType === 'paracetamol') {
+      setPackSession({
+        registrationNumber: '04-1234',
+        brand: 'Emzor',
+        productName: 'Paracetamol 500mg Tablets',
+        manufacturer: 'Emzor Pharmaceutical Industries Ltd',
+        batchNumber: 'B2026-01',
+        manufactureDate: '01/2026',
+        expiryDate: '12/2028',
+        category: 'medicine',
+        medicineStrength: '500mg',
+        dosageForm: 'Tablets',
+        activeIngredients: 'Paracetamol BP 500mg',
+        directions: 'Adults: 1-2 tablets 3 times daily. Do not exceed 8 tablets in 24 hours.',
+        hasActiveScan: true,
+        isNumberConfirmed: false,
+        isIdentityConfirmed: false,
+        isStrengthConfirmed: false,
+        verdictResult: null,
+      });
+    } else {
+      setPackSession({
+        registrationNumber: '01-0812',
+        brand: 'Golden Penny',
+        productName: 'Semovita 1kg Pack',
+        manufacturer: 'Flour Mills of Nigeria Plc',
+        batchNumber: 'FMN-8842',
+        manufactureDate: '03/2026',
+        expiryDate: '03/2027',
+        category: 'food',
+        hasActiveScan: true,
+        isNumberConfirmed: false,
+        isIdentityConfirmed: false,
+        isStrengthConfirmed: false,
+        verdictResult: null,
+      });
+    }
+    router.push('/review');
+  };
+
   return (
     <AppShell
       headerProps={{
@@ -175,6 +216,20 @@ export default function ReadingPackPage() {
                   Type pack details manually
                 </Button>
               </Link>
+              <Button
+                variant="secondary"
+                fullWidth
+                onClick={() => handleLoadSample('paracetamol')}
+              >
+                Test sample: Emzor Paracetamol 500mg
+              </Button>
+              <Button
+                variant="secondary"
+                fullWidth
+                onClick={() => handleLoadSample('semovita')}
+              >
+                Test sample: Golden Penny Semovita
+              </Button>
               <Link href="/scan/capture" className="tl-w-full">
                 <Button variant="ghost" fullWidth>
                   Retake photo
