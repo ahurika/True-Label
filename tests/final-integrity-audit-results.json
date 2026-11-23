@@ -1,0 +1,396 @@
+{
+  "navigation": [
+    {
+      "viewport": "Desktop Chrome",
+      "check": "Header purity (only logo + theme toggle)",
+      "passed": true,
+      "evidence": "Logo: true, ThemeToggle: true, ExtraLinks: 0"
+    },
+    {
+      "viewport": "Desktop Chrome",
+      "check": "Logo navigation to home",
+      "passed": true,
+      "evidence": "Navigated to http://localhost:3000/"
+    },
+    {
+      "viewport": "Desktop Chrome",
+      "check": "Theme toggle & persistence across reload",
+      "passed": true,
+      "evidence": "Initial: light, Toggled: dark, LocalStorage: dark, Reload: dark"
+    },
+    {
+      "viewport": "Desktop Chrome",
+      "check": "Navigation non-obstruction of primary CTA",
+      "passed": true,
+      "evidence": "Overlap detected: false"
+    },
+    {
+      "viewport": "Desktop Chrome",
+      "check": "Navigation hidden on /scan/capture to avoid camera overlap",
+      "passed": true,
+      "evidence": "Visible on camera screen: false"
+    },
+    {
+      "viewport": "Desktop Chrome",
+      "check": "Active navigation state accuracy",
+      "passed": true,
+      "evidence": "Active tab text: \"How it works\""
+    },
+    {
+      "viewport": "Desktop Chrome",
+      "check": "Keyboard tab focus sequence on header elements",
+      "passed": true,
+      "evidence": "Logo focused: true, Theme toggle focused: true"
+    },
+    {
+      "viewport": "Tablet (iPad Mini)",
+      "check": "Header purity (only logo + theme toggle)",
+      "passed": true,
+      "evidence": "Logo: true, ThemeToggle: true, ExtraLinks: 0"
+    },
+    {
+      "viewport": "Tablet (iPad Mini)",
+      "check": "Logo navigation to home",
+      "passed": true,
+      "evidence": "Navigated to http://localhost:3000/"
+    },
+    {
+      "viewport": "Tablet (iPad Mini)",
+      "check": "Theme toggle & persistence across reload",
+      "passed": true,
+      "evidence": "Initial: light, Toggled: dark, LocalStorage: dark, Reload: dark"
+    },
+    {
+      "viewport": "Tablet (iPad Mini)",
+      "check": "Navigation non-obstruction of primary CTA",
+      "passed": true,
+      "evidence": "Overlap detected: false"
+    },
+    {
+      "viewport": "Tablet (iPad Mini)",
+      "check": "Navigation hidden on /scan/capture to avoid camera overlap",
+      "passed": true,
+      "evidence": "Visible on camera screen: false"
+    },
+    {
+      "viewport": "Tablet (iPad Mini)",
+      "check": "Active navigation state accuracy",
+      "passed": true,
+      "evidence": "Active tab text: \"How it works\""
+    },
+    {
+      "viewport": "Tablet (iPad Mini)",
+      "check": "Keyboard tab focus sequence on header elements",
+      "passed": true,
+      "evidence": "Logo focused: true, Theme toggle focused: true"
+    },
+    {
+      "viewport": "Mobile (iPhone 13)",
+      "check": "Header purity (only logo + theme toggle)",
+      "passed": true,
+      "evidence": "Logo: true, ThemeToggle: true, ExtraLinks: 0"
+    },
+    {
+      "viewport": "Mobile (iPhone 13)",
+      "check": "Logo navigation to home",
+      "passed": true,
+      "evidence": "Navigated to http://localhost:3000/"
+    },
+    {
+      "viewport": "Mobile (iPhone 13)",
+      "check": "Theme toggle & persistence across reload",
+      "passed": true,
+      "evidence": "Initial: light, Toggled: dark, LocalStorage: dark, Reload: dark"
+    },
+    {
+      "viewport": "Mobile (iPhone 13)",
+      "check": "Navigation non-obstruction of primary CTA",
+      "passed": true,
+      "evidence": "Overlap detected: false"
+    },
+    {
+      "viewport": "Mobile (iPhone 13)",
+      "check": "Navigation hidden on /scan/capture to avoid camera overlap",
+      "passed": true,
+      "evidence": "Visible on camera screen: false"
+    },
+    {
+      "viewport": "Mobile (iPhone 13)",
+      "check": "Active navigation state accuracy",
+      "passed": true,
+      "evidence": "Active tab text: \"How it works\""
+    },
+    {
+      "viewport": "Mobile (iPhone 13)",
+      "check": "Keyboard tab focus sequence on header elements",
+      "passed": true,
+      "evidence": "Logo focused: true, Theme toggle focused: true"
+    }
+  ],
+  "scanJourney": {
+    "screens": [
+      {
+        "url": "http://localhost:3000/",
+        "name": "Home Landing"
+      },
+      {
+        "url": "http://localhost:3000/scan/capture",
+        "name": "Camera Capture"
+      },
+      {
+        "url": "http://localhost:3000/scan/reading",
+        "name": "OCR Reading Transition"
+      },
+      {
+        "url": "http://localhost:3000/review/enter",
+        "name": "Manual Pack Entry Form"
+      },
+      {
+        "url": "http://localhost:3000/review",
+        "name": "Review & Unified Confirm"
+      },
+      {
+        "url": "http://localhost:3000/result",
+        "name": "Verification Result"
+      }
+    ],
+    "clicks": 7,
+    "fieldsRequired": [],
+    "decisions": [
+      "Choose between \"Scan a product\" (camera) or \"Enter product details manually\"",
+      "Choose to upload photo or capture via webcam/device camera",
+      "Verify extracted registration number and brand/product name against physical pack"
+    ],
+    "confusionPoints": [],
+    "backwardsPreserved": true
+  },
+  "verdicts": [
+    {
+      "priority": 4,
+      "verdict": "registry_match",
+      "label": "Registered and matches",
+      "passed": true,
+      "caveatHonored": true,
+      "evidence": "Label: true, Evidence: true, Caveat: true"
+    },
+    {
+      "priority": 1,
+      "verdict": "alert_match",
+      "label": "Matches a NAFDAC alert",
+      "passed": true,
+      "caveatHonored": true,
+      "evidence": "Label: true, Evidence: true, Caveat: false"
+    },
+    {
+      "priority": 2,
+      "verdict": "registration_discrepancy",
+      "label": "Registration details don't match",
+      "passed": true,
+      "caveatHonored": true,
+      "evidence": "Label: true, Evidence: true, Caveat: false"
+    },
+    {
+      "priority": 3,
+      "verdict": "could_not_confirm",
+      "label": "Could not confirm",
+      "passed": true,
+      "caveatHonored": true,
+      "evidence": "Label: true, Evidence: true, Caveat: false"
+    }
+  ],
+  "consistency": [
+    {
+      "route": "/",
+      "hasSingleH1": true,
+      "hasOverflow": false,
+      "headingPrefixes": [],
+      "smallTargetsCount": 0,
+      "passed": true
+    },
+    {
+      "route": "/scan",
+      "hasSingleH1": true,
+      "hasOverflow": false,
+      "headingPrefixes": [],
+      "smallTargetsCount": 0,
+      "passed": true
+    },
+    {
+      "route": "/scan/capture",
+      "hasSingleH1": true,
+      "hasOverflow": false,
+      "headingPrefixes": [],
+      "smallTargetsCount": 0,
+      "passed": true
+    },
+    {
+      "route": "/scan/reading",
+      "hasSingleH1": true,
+      "hasOverflow": false,
+      "headingPrefixes": [],
+      "smallTargetsCount": 0,
+      "passed": true
+    },
+    {
+      "route": "/review",
+      "hasSingleH1": true,
+      "hasOverflow": false,
+      "headingPrefixes": [],
+      "smallTargetsCount": 0,
+      "passed": true
+    },
+    {
+      "route": "/review/enter",
+      "hasSingleH1": true,
+      "hasOverflow": false,
+      "headingPrefixes": [],
+      "smallTargetsCount": 0,
+      "passed": true
+    },
+    {
+      "route": "/review/confirm",
+      "hasSingleH1": true,
+      "hasOverflow": false,
+      "headingPrefixes": [],
+      "smallTargetsCount": 0,
+      "passed": true
+    },
+    {
+      "route": "/review/medicine",
+      "hasSingleH1": true,
+      "hasOverflow": false,
+      "headingPrefixes": [],
+      "smallTargetsCount": 0,
+      "passed": true
+    },
+    {
+      "route": "/result",
+      "hasSingleH1": true,
+      "hasOverflow": false,
+      "headingPrefixes": [],
+      "smallTargetsCount": 0,
+      "passed": true
+    },
+    {
+      "route": "/result/alert",
+      "hasSingleH1": true,
+      "hasOverflow": false,
+      "headingPrefixes": [],
+      "smallTargetsCount": 0,
+      "passed": true
+    },
+    {
+      "route": "/result/number-problem",
+      "hasSingleH1": true,
+      "hasOverflow": false,
+      "headingPrefixes": [],
+      "smallTargetsCount": 0,
+      "passed": true
+    },
+    {
+      "route": "/result/unconfirmed",
+      "hasSingleH1": true,
+      "hasOverflow": false,
+      "headingPrefixes": [],
+      "smallTargetsCount": 0,
+      "passed": true
+    },
+    {
+      "route": "/result/evidence",
+      "hasSingleH1": true,
+      "hasOverflow": false,
+      "headingPrefixes": [],
+      "smallTargetsCount": 0,
+      "passed": true
+    },
+    {
+      "route": "/how-it-works",
+      "hasSingleH1": true,
+      "hasOverflow": false,
+      "headingPrefixes": [],
+      "smallTargetsCount": 0,
+      "passed": true
+    },
+    {
+      "route": "/about",
+      "hasSingleH1": true,
+      "hasOverflow": false,
+      "headingPrefixes": [],
+      "smallTargetsCount": 0,
+      "passed": true
+    },
+    {
+      "route": "/help",
+      "hasSingleH1": true,
+      "hasOverflow": false,
+      "headingPrefixes": [],
+      "smallTargetsCount": 0,
+      "passed": true
+    },
+    {
+      "route": "/privacy",
+      "hasSingleH1": true,
+      "hasOverflow": false,
+      "headingPrefixes": [],
+      "smallTargetsCount": 1,
+      "passed": true
+    },
+    {
+      "route": "/terms",
+      "hasSingleH1": true,
+      "hasOverflow": false,
+      "headingPrefixes": [],
+      "smallTargetsCount": 0,
+      "passed": true
+    },
+    {
+      "route": "/report",
+      "hasSingleH1": true,
+      "hasOverflow": false,
+      "headingPrefixes": [],
+      "smallTargetsCount": 0,
+      "passed": true
+    },
+    {
+      "route": "/reference",
+      "hasSingleH1": true,
+      "hasOverflow": false,
+      "headingPrefixes": [],
+      "smallTargetsCount": 0,
+      "passed": true
+    },
+    {
+      "route": "/history",
+      "hasSingleH1": true,
+      "hasOverflow": false,
+      "headingPrefixes": [],
+      "smallTargetsCount": 0,
+      "passed": true
+    },
+    {
+      "route": "/offline",
+      "hasSingleH1": true,
+      "hasOverflow": false,
+      "headingPrefixes": [],
+      "smallTargetsCount": 0,
+      "passed": true
+    },
+    {
+      "route": "/unavailable",
+      "hasSingleH1": true,
+      "hasOverflow": false,
+      "headingPrefixes": [],
+      "smallTargetsCount": 0,
+      "passed": true
+    }
+  ],
+  "accessibility": [
+    {
+      "feature": "Medicine Strict Label-Only Boundary",
+      "passed": true,
+      "evidence": "Disclaimer: true, NoDosing: true, NoSchedule: true"
+    }
+  ],
+  "functional": [],
+  "defects": []
+}
