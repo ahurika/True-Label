@@ -1,0 +1,247 @@
+// ============================================================
+// TrueLabel Prisma Database Schema (Neon Serverless PostgreSQL)
+// In accordance with TrueLabel PRD v3.1 Section 16
+// ============================================================
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ── Enums ───────────────────────────────────────────────────
+
+enum RegistryStatus {
+  active
+  inactive
+  unknown
+}
+
+enum RegistryCoverage {
+  complete
+  partial
+  none
+}
+
+enum RecordCompleteness {
+  complete
+  incomplete
+}
+
+enum Category {
+  medicine
+  device
+  herbal
+  food
+  beverage
+  water
+  cosmetic
+  toothpaste
+  household
+  other
+}
+
+enum Verdict {
+  alert
+  number_problem
+  could_not_confirm
+  registered_matches
+}
+
+enum Outcome {
+  ok
+  low_confidence
+  rejected
+  error
+}
+
+enum Channel {
+  web
+  whatsapp
+}
+
+enum EventType {
+  scan_started
+  scan_completed
+  field_confirmed
+  field_edited
+  audio_played
+  share_created
+  report_started
+  report_action
+  dispute_submitted
+  typed_number
+  retry
+  error
+}
+
+enum AlertMatchType {
+  batch_number
+  affected_pack_name
+  brand_only
+  none
+}
+
+// ── Models ──────────────────────────────────────────────────
+
+model RegistrySource {
+  id               String           @id @default(cuid())
+  name             String
+  category         Category
+  coverage         RegistryCoverage
+  coverageEvidence String
+  lookupMethod     String
+  sourceUrl        String
+  lastCheckedAt    DateTime
+  records          RegistryRecord[]
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  @@unique([name, category])
+  @@index([category])
+}
+
+model RegistryRecord {
+  id                     String             @id @default(cuid())
+  registrationNumber     String
+  category               Category
+  productName            String
+  brand                  String?
+  manufacturer           String?
+  applicant              String?
+  dosageForm             String?
+  activeIngredients      Json?
+  status                 RegistryStatus
+  registeredUntil        DateTime?
+  completeness           RecordCompleteness
+  normalizedName         String?
+  normalizedBrand        String?
+  normalizedManufacturer String?
+  sourceId               String
+  source                 RegistrySource     @relation(fields: [sourceId], references: [id])
+  sourceUrl              String
+  retrievedAt            DateTime
+  lastVerifiedAt         DateTime
+  fieldProvenance        Json
+  referenceProducts      ReferenceProduct[]
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
+
+  @@unique([sourceId, category, registrationNumber])
+  @@index([category, registrationNumber])
+  @@index([normalizedName])
+}
+
+model ReferenceProduct {
+  id                 String          @id @default(cuid())
+  category           Category
+  brand              String
+  productName        String
+  packVariant        String
+  packSizes          String[]
+  registryRecordId   String?
+  registryRecord     RegistryRecord? @relation(fields: [registryRecordId], references: [id])
+  photoDate          DateTime?
+  ingredientsText    String?
+  checklist          Json
+  packMapKey         String
+  sourceProvenance   Json
+  sourceTier         String
+  verificationStatus String
+  lastCheckedAt      DateTime
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+
+  @@index([category, brand, productName])
+}
+
+model Alert {
+  id                String    @id @default(cuid())
+  alertNumber       String    @unique
+  issuedOn          DateTime
+  title             String
+  category          Category?
+  genuineBrands     String[]
+  affectedPackNames String[]
+  batchNumbers      String[]
+  sourceUrl         String
+  retrievedAt       DateTime
+  lastCheckedAt     DateTime
+  evidence          Json
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([issuedOn])
+  @@index([category])
+}
+
+model ShareRecord {
+  id              String   @id @default(cuid())
+  tokenHash       String   @unique
+  confirmedInputs Json
+  verdict         Verdict
+  reasonCodes     Json
+  flags           Json
+  alertEvidence   Json
+  engineVersion   String
+  sourceDataAsOf  DateTime
+  createdAt       DateTime @default(now())
+  expiresAt       DateTime
+
+  @@index([expiresAt])
+}
+
+model WhatsAppSession {
+  id         String   @id @default(cuid())
+  senderHash String
+  language   String
+  state      Json
+  expiresAt  DateTime
+  updatedAt  DateTime @updatedAt
+
+  @@index([senderHash, expiresAt])
+  @@index([expiresAt])
+}
+
+model WhatsAppMessage {
+  messageId        String    @id
+  receivedAt       DateTime  @default(now())
+  processingStatus String
+  attempts         Int       @default(0)
+  completedAt      DateTime?
+  expiresAt        DateTime
+
+  @@index([expiresAt])
+}
+
+model ExtractionLog {
+  id            String   @id @default(cuid())
+  modelId       String
+  promptVersion String
+  schemaVersion String
+  latencyMs     Int
+  outcome       Outcome
+  createdAt     DateTime @default(now())
+
+  @@index([outcome, createdAt])
+}
+
+model Event {
+  id               String    @id @default(cuid())
+  type             EventType
+  channel          Channel
+  category         Category?
+  verdict          Verdict?
+  hasReferenceCard Boolean?
+  editedFieldCount Int       @default(0)
+  language         String
+  pseudonymousId   String
+  createdAt        DateTime  @default(now())
+
+  @@index([type, createdAt])
+  @@index([pseudonymousId, createdAt])
+}
