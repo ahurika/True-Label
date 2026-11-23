@@ -1,0 +1,609 @@
+{
+  "env": {
+    "targetUrl": "http://localhost:3000",
+    "browser": "Chromium 159.0.8154.6",
+    "timestamp": "2026-11-20T19:24:45.196Z"
+  },
+  "routes": [
+    {
+      "path": "/",
+      "label": "Home Page",
+      "viewport": "Desktop Chrome",
+      "status": 200,
+      "title": "TrueLabel — Before you buy, read the label.",
+      "bodyLength": 559,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/scan",
+      "label": "Scan Guide",
+      "viewport": "Desktop Chrome",
+      "status": 200,
+      "title": "TrueLabel — Before you buy, read the label.",
+      "bodyLength": 526,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/scan/capture",
+      "label": "Multi-Slot Camera Capture",
+      "viewport": "Desktop Chrome",
+      "status": 200,
+      "title": "TrueLabel — Before you buy, read the label.",
+      "bodyLength": 419,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/scan/reading",
+      "label": "OCR Reading Status",
+      "viewport": "Desktop Chrome",
+      "status": 200,
+      "title": "TrueLabel — Before you buy, read the label.",
+      "bodyLength": 359,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/review",
+      "label": "Review Pack Details",
+      "viewport": "Desktop Chrome",
+      "status": 200,
+      "title": "TrueLabel — Before you buy, read the label.",
+      "bodyLength": 296,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/review/enter",
+      "label": "Manual Pack Entry",
+      "viewport": "Desktop Chrome",
+      "status": 200,
+      "title": "TrueLabel — Before you buy, read the label.",
+      "bodyLength": 860,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/review/confirm",
+      "label": "Confirmation Gate",
+      "viewport": "Desktop Chrome",
+      "status": 200,
+      "title": "TrueLabel — Before you buy, read the label.",
+      "bodyLength": 191,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/review/medicine",
+      "label": "Medicine Label-Only",
+      "viewport": "Desktop Chrome",
+      "status": 200,
+      "title": "TrueLabel — Before you buy, read the label.",
+      "bodyLength": 212,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/result",
+      "label": "Verdict Result",
+      "viewport": "Desktop Chrome",
+      "status": 200,
+      "title": "TrueLabel — Before you buy, read the label.",
+      "bodyLength": 309,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/result/alert",
+      "label": "Alert Result View",
+      "viewport": "Desktop Chrome",
+      "status": 200,
+      "title": "TrueLabel — Before you buy, read the label.",
+      "bodyLength": 500,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/result/number-problem",
+      "label": "Number Problem Result View",
+      "viewport": "Desktop Chrome",
+      "status": 200,
+      "title": "TrueLabel — Before you buy, read the label.",
+      "bodyLength": 510,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/result/unconfirmed",
+      "label": "Unconfirmed Result View",
+      "viewport": "Desktop Chrome",
+      "status": 200,
+      "title": "TrueLabel — Before you buy, read the label.",
+      "bodyLength": 432,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/result/evidence",
+      "label": "Evidence Details",
+      "viewport": "Desktop Chrome",
+      "status": 200,
+      "title": "TrueLabel — Before you buy, read the label.",
+      "bodyLength": 916,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/how-it-works",
+      "label": "How It Works",
+      "viewport": "Desktop Chrome",
+      "status": 200,
+      "title": "How It Works — Packaging Reading & Verification Workflow | TrueLabel · TrueLabel",
+      "bodyLength": 2221,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/about",
+      "label": "About TrueLabel",
+      "viewport": "Desktop Chrome",
+      "status": 200,
+      "title": "About TrueLabel — Consumer Packaging Transparency in Nigeria · TrueLabel",
+      "bodyLength": 1674,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/help",
+      "label": "Help & FAQ",
+      "viewport": "Desktop Chrome",
+      "status": 200,
+      "title": "TrueLabel — Before you buy, read the label.",
+      "bodyLength": 569,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/privacy",
+      "label": "Privacy Policy",
+      "viewport": "Desktop Chrome",
+      "status": 200,
+      "title": "Privacy Policy & Zero Image Retention | TrueLabel · TrueLabel",
+      "bodyLength": 1765,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/terms",
+      "label": "Terms of Use",
+      "viewport": "Desktop Chrome",
+      "status": 200,
+      "title": "Terms of Service & Documentary Stance | TrueLabel · TrueLabel",
+      "bodyLength": 1818,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/report",
+      "label": "Report Concern",
+      "viewport": "Desktop Chrome",
+      "status": 200,
+      "title": "TrueLabel — Before you buy, read the label.",
+      "bodyLength": 964,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/reference",
+      "label": "Reference Gazette Library",
+      "viewport": "Desktop Chrome",
+      "status": 200,
+      "title": "Reference Library — Statutory Product Records | TrueLabel · TrueLabel",
+      "bodyLength": 2663,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/history",
+      "label": "Scan History",
+      "viewport": "Desktop Chrome",
+      "status": 200,
+      "title": "TrueLabel — Before you buy, read the label.",
+      "bodyLength": 173,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/offline",
+      "label": "Offline Fallback",
+      "viewport": "Desktop Chrome",
+      "status": 200,
+      "title": "TrueLabel — Before you buy, read the label.",
+      "bodyLength": 246,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/unavailable",
+      "label": "Service Unavailable",
+      "viewport": "Desktop Chrome",
+      "status": 200,
+      "title": "TrueLabel — Before you buy, read the label.",
+      "bodyLength": 226,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/",
+      "label": "Home Page",
+      "viewport": "Mobile (iPhone 13 / Pixel 7)",
+      "status": 200,
+      "title": "TrueLabel — Before you buy, read the label.",
+      "bodyLength": 559,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/scan",
+      "label": "Scan Guide",
+      "viewport": "Mobile (iPhone 13 / Pixel 7)",
+      "status": 200,
+      "title": "TrueLabel — Before you buy, read the label.",
+      "bodyLength": 526,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/scan/capture",
+      "label": "Multi-Slot Camera Capture",
+      "viewport": "Mobile (iPhone 13 / Pixel 7)",
+      "status": 200,
+      "title": "TrueLabel — Before you buy, read the label.",
+      "bodyLength": 419,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/scan/reading",
+      "label": "OCR Reading Status",
+      "viewport": "Mobile (iPhone 13 / Pixel 7)",
+      "status": 200,
+      "title": "TrueLabel — Before you buy, read the label.",
+      "bodyLength": 359,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/review",
+      "label": "Review Pack Details",
+      "viewport": "Mobile (iPhone 13 / Pixel 7)",
+      "status": 200,
+      "title": "TrueLabel — Before you buy, read the label.",
+      "bodyLength": 296,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/review/enter",
+      "label": "Manual Pack Entry",
+      "viewport": "Mobile (iPhone 13 / Pixel 7)",
+      "status": 200,
+      "title": "TrueLabel — Before you buy, read the label.",
+      "bodyLength": 860,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/review/confirm",
+      "label": "Confirmation Gate",
+      "viewport": "Mobile (iPhone 13 / Pixel 7)",
+      "status": 200,
+      "title": "TrueLabel — Before you buy, read the label.",
+      "bodyLength": 191,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/review/medicine",
+      "label": "Medicine Label-Only",
+      "viewport": "Mobile (iPhone 13 / Pixel 7)",
+      "status": 200,
+      "title": "TrueLabel — Before you buy, read the label.",
+      "bodyLength": 212,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/result",
+      "label": "Verdict Result",
+      "viewport": "Mobile (iPhone 13 / Pixel 7)",
+      "status": 200,
+      "title": "TrueLabel — Before you buy, read the label.",
+      "bodyLength": 309,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/result/alert",
+      "label": "Alert Result View",
+      "viewport": "Mobile (iPhone 13 / Pixel 7)",
+      "status": 200,
+      "title": "TrueLabel — Before you buy, read the label.",
+      "bodyLength": 500,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/result/number-problem",
+      "label": "Number Problem Result View",
+      "viewport": "Mobile (iPhone 13 / Pixel 7)",
+      "status": 200,
+      "title": "TrueLabel — Before you buy, read the label.",
+      "bodyLength": 510,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/result/unconfirmed",
+      "label": "Unconfirmed Result View",
+      "viewport": "Mobile (iPhone 13 / Pixel 7)",
+      "status": 200,
+      "title": "TrueLabel — Before you buy, read the label.",
+      "bodyLength": 432,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/result/evidence",
+      "label": "Evidence Details",
+      "viewport": "Mobile (iPhone 13 / Pixel 7)",
+      "status": 200,
+      "title": "TrueLabel — Before you buy, read the label.",
+      "bodyLength": 916,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/how-it-works",
+      "label": "How It Works",
+      "viewport": "Mobile (iPhone 13 / Pixel 7)",
+      "status": 200,
+      "title": "How It Works — Packaging Reading & Verification Workflow | TrueLabel · TrueLabel",
+      "bodyLength": 2221,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/about",
+      "label": "About TrueLabel",
+      "viewport": "Mobile (iPhone 13 / Pixel 7)",
+      "status": 200,
+      "title": "About TrueLabel — Consumer Packaging Transparency in Nigeria · TrueLabel",
+      "bodyLength": 1674,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/help",
+      "label": "Help & FAQ",
+      "viewport": "Mobile (iPhone 13 / Pixel 7)",
+      "status": 200,
+      "title": "TrueLabel — Before you buy, read the label.",
+      "bodyLength": 569,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/privacy",
+      "label": "Privacy Policy",
+      "viewport": "Mobile (iPhone 13 / Pixel 7)",
+      "status": 200,
+      "title": "Privacy Policy & Zero Image Retention | TrueLabel · TrueLabel",
+      "bodyLength": 1765,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/terms",
+      "label": "Terms of Use",
+      "viewport": "Mobile (iPhone 13 / Pixel 7)",
+      "status": 200,
+      "title": "Terms of Service & Documentary Stance | TrueLabel · TrueLabel",
+      "bodyLength": 1818,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/report",
+      "label": "Report Concern",
+      "viewport": "Mobile (iPhone 13 / Pixel 7)",
+      "status": 200,
+      "title": "TrueLabel — Before you buy, read the label.",
+      "bodyLength": 964,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/reference",
+      "label": "Reference Gazette Library",
+      "viewport": "Mobile (iPhone 13 / Pixel 7)",
+      "status": 200,
+      "title": "Reference Library — Statutory Product Records | TrueLabel · TrueLabel",
+      "bodyLength": 2663,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/history",
+      "label": "Scan History",
+      "viewport": "Mobile (iPhone 13 / Pixel 7)",
+      "status": 200,
+      "title": "TrueLabel — Before you buy, read the label.",
+      "bodyLength": 173,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/offline",
+      "label": "Offline Fallback",
+      "viewport": "Mobile (iPhone 13 / Pixel 7)",
+      "status": 200,
+      "title": "TrueLabel — Before you buy, read the label.",
+      "bodyLength": 246,
+      "hasOverflow": false,
+      "pass": true
+    },
+    {
+      "path": "/unavailable",
+      "label": "Service Unavailable",
+      "viewport": "Mobile (iPhone 13 / Pixel 7)",
+      "status": 200,
+      "title": "TrueLabel — Before you buy, read the label.",
+      "bodyLength": 226,
+      "hasOverflow": false,
+      "pass": true
+    }
+  ],
+  "interactions": [
+    {
+      "action": "Home Page Scan CTA visible",
+      "passed": true
+    },
+    {
+      "action": "Home Scan CTA Click & Navigate",
+      "url": "http://localhost:3000/scan/capture",
+      "passed": true
+    },
+    {
+      "action": "Mobile Bottom Nav Bar Visible",
+      "passed": true
+    },
+    {
+      "action": "Mobile Bottom Nav Tab: Home",
+      "href": "/",
+      "currentUrl": "http://localhost:3000/",
+      "passed": true
+    },
+    {
+      "action": "Mobile Bottom Nav Tab: Scan",
+      "href": "/scan",
+      "currentUrl": "http://localhost:3000/scan",
+      "passed": true
+    },
+    {
+      "action": "Mobile Bottom Nav Tab: How it works",
+      "href": "/how-it-works",
+      "currentUrl": "http://localhost:3000/how-it-works",
+      "passed": true
+    },
+    {
+      "action": "Mobile Bottom Nav Tab: Help",
+      "href": "/help",
+      "currentUrl": "http://localhost:3000/help",
+      "passed": true
+    },
+    {
+      "action": "Front Slot Upload & Tab Update",
+      "passed": true
+    },
+    {
+      "action": "Front Slot Preview Displayed",
+      "passed": true
+    },
+    {
+      "action": "Front Slot Image Removal",
+      "passed": true
+    },
+    {
+      "action": "Back Slot Upload & Tab Update",
+      "passed": true
+    },
+    {
+      "action": "Review & Extract Transition",
+      "passed": true
+    },
+    {
+      "action": "Reading Fallback to Manual Entry Visible",
+      "passed": true
+    },
+    {
+      "action": "Form Validation Empty Guard",
+      "passed": true
+    },
+    {
+      "action": "Share Result Generation",
+      "passed": false
+    },
+    {
+      "action": "Read-Only Share Page Snapshot",
+      "passed": true
+    },
+    {
+      "action": "Evidence Details Navigation",
+      "passed": true
+    },
+    {
+      "action": "Medicine Label-Only Pharmacist Notice",
+      "passed": true
+    },
+    {
+      "action": "Report Summary Copy Action",
+      "passed": true
+    },
+    {
+      "action": "Report Submission Local Feedback",
+      "passed": true
+    },
+    {
+      "action": "NAFDAC Official Contact Channels Verified",
+      "passed": true
+    },
+    {
+      "action": "Review Route Honest Empty State",
+      "passed": true
+    },
+    {
+      "action": "Review Confirm Route Honest Empty State",
+      "passed": true
+    },
+    {
+      "action": "Result Route Honest Empty State",
+      "passed": true
+    },
+    {
+      "action": "Browser Back Navigation",
+      "passed": true
+    }
+  ],
+  "verdicts": [
+    {
+      "name": "Priority 4: registry_match",
+      "rendered": true,
+      "caveatDisplayed": true,
+      "passed": true
+    },
+    {
+      "name": "Priority 1: alert_match",
+      "rendered": true,
+      "passed": true
+    },
+    {
+      "name": "Priority 2: registration_discrepancy",
+      "rendered": true,
+      "passed": true
+    },
+    {
+      "name": "Priority 3: could_not_confirm",
+      "rendered": true,
+      "passed": true
+    }
+  ],
+  "errors": {
+    "consoleErrors": [],
+    "hydrationErrors": [],
+    "failedRequests": [],
+    "layoutOverflows": []
+  }
+}
