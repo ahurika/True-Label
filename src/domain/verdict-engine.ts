@@ -21,6 +21,8 @@ import { evaluateSourceCoverage } from './source-coverage';
 import { matchIdentity } from './identity-matching';
 import { REASON_CODES } from './reason-codes';
 import { validateEvidenceFreshness } from './evidence-validation';
+import { validateAlertProvenance } from './alert-provenance';
+import { validateRegistryRecordProvenance } from './registry-provenance';
 
 export const DECISION_ENGINE_VERSION = '4.0.0-deterministic';
 export const MATCHING_RULE_VERSION = '2026.11.20-v4';
@@ -125,11 +127,32 @@ export function evaluateVerdict(
   // RULE 1 (Priority 1): Matches a NAFDAC alert -> 'alert_match' (Legacy Verdict 2)
   // Triggered ONLY by exact batch number or exact affected-pack name.
   // Brand-only similarity NEVER triggers alert_match.
+  // In production, requires verified official alert: synthetic or unverified alerts cannot trigger alert_match
   // ────────────────────────────────────────────────────────────
   if (alertMatch) {
+    const isProductionEnv = process.env.NODE_ENV === 'production';
+    const provenanceValidation = validateAlertProvenance({
+      alertNumber: alertMatch.alertNumber,
+      title: alertMatch.title,
+      sourceUrl: alertMatch.sourceUrl,
+      officialSourceUrl: alertMatch.officialSourceUrl,
+      retrievedAt: alertMatch.retrievedAt,
+      lastReviewDate: alertMatch.lastReviewDate,
+      verifiedAt: alertMatch.verifiedAt,
+      verifiedBy: alertMatch.verifiedBy,
+      evidenceClassification: alertMatch.evidenceClassification,
+      isSyntheticFixture: alertMatch.isSyntheticFixture,
+      isProductionEligible: alertMatch.isProductionEligible,
+      matchedField: alertMatch.matchedField,
+      matchedValue: alertMatch.matchedValue,
+    });
+
+    const isAlertProductionEligible = !isProductionEnv || provenanceValidation.isValid;
+
     if (
-      alertMatch.matchedField === 'batch_number' ||
-      alertMatch.matchedField === 'affected_pack_name'
+      isAlertProductionEligible &&
+      (alertMatch.matchedField === 'batch_number' ||
+        alertMatch.matchedField === 'affected_pack_name')
     ) {
       gateChecks.noAlertApplies = false;
       flags.push('ALERT_MATCHED');
@@ -247,6 +270,56 @@ export function evaluateVerdict(
     }
 
     if (identityCheck.isMaterialMismatch && !identityCheck.overallIdentityMatch) {
+      // PROVENANCE GUARD FOR DISCREPANCY VERDICTS:
+      // A definitive discrepancy verdict (declaring that a printed number belongs to a different manufacturer)
+      // requires an independently verified official record (such as Green Book record 04-0411).
+      // If the registry record is historical, unverified, or synthetic (such as Medik-55 04-1234),
+      // its association with a manufacturer is not an independently confirmed statutory fact and
+      // CANNOT prove a packaging discrepancy. The engine must fail closed to could_not_confirm.
+      const isProductionEnv = process.env.NODE_ENV === 'production';
+      const isRecordVerifiedOfficial = isProductionEnv
+        ? validateRegistryRecordProvenance({
+            registrationNumber: registryRecord.registrationNumber,
+            productName: registryRecord.productName,
+            brand: registryRecord.brand,
+            manufacturer: registryRecord.manufacturer,
+            sourceUrl: registryRecord.sourceUrl,
+            retrievedAt: registryRecord.retrievedAt,
+            lastVerifiedAt: registryRecord.lastVerifiedAt,
+            verifiedAt: registryRecord.verifiedAt,
+            verifiedBy: registryRecord.verifiedBy,
+            evidenceClassification: registryRecord.evidenceClassification,
+            isProductionEligible: registryRecord.isProductionEligible,
+            fieldProvenance: registryRecord.fieldProvenance,
+          }).isValid
+        : registryRecord.evidenceClassification !== 'historical_official_record' &&
+          registryRecord.evidenceClassification !== 'unverified_record';
+
+      if (!isRecordVerifiedOfficial) {
+        flags.push('INCOMPLETE_SOURCE');
+        const summary = `The statutory reference record for registration number ${input.registrationNumber} is historical or unverified and cannot independently confirm manufacturer authorization or prove a packaging discrepancy.`;
+        return {
+          verdict: 'could_not_confirm',
+          verdictNumber: 4,
+          verdictDefinition: LEGACY_VERDICT_DEFINITIONS[4],
+          displayLabel: V4_VERDICT_DEFINITIONS.could_not_confirm.displayLabel,
+          reasonCode: REASON_CODES.UNCONFIRMED_RECORD_INCOMPLETE,
+          explanation: summary,
+          summary,
+          mandatoryCaveat: false,
+          evidenceReferences: evidenceRefs,
+          registryRecord,
+          discrepancies,
+          flags: flags as FlagCode[],
+          sourceMetadata,
+          matchingRuleVersion: MATCHING_RULE_VERSION,
+          decisionEngineVersion: DECISION_ENGINE_VERSION,
+          nextRecommendedAction:
+            'Search the official NAFDAC portal (nafdac.gov.ng) or contact regulatory authorities directly to verify registration authorization.',
+          gateChecks,
+        };
+      }
+
       discrepancies.push(...identityCheck.mismatchDetails);
       const summary = `Registration number ${input.registrationNumber} is registered to a different product: "${registryRecord.brand || ''} ${registryRecord.productName}" (Manufacturer: ${registryRecord.manufacturer || 'Different entity'}), not "${input.brand} ${input.productName}".`;
       return {
@@ -424,6 +497,50 @@ export function evaluateVerdict(
       matchingRuleVersion: MATCHING_RULE_VERSION,
       decisionEngineVersion: DECISION_ENGINE_VERSION,
       nextRecommendedAction: 'Search the official NAFDAC portal (nafdac.gov.ng) or NAPAMS registration database directly.',
+      gateChecks,
+    };
+  }
+
+  // Gate: Evidence Classification & Production Eligibility
+  const isProductionEnv = process.env.NODE_ENV === 'production';
+  const isRecordEligibleForPositiveMatch = isProductionEnv
+    ? validateRegistryRecordProvenance({
+        registrationNumber: registryRecord.registrationNumber,
+        productName: registryRecord.productName,
+        brand: registryRecord.brand,
+        manufacturer: registryRecord.manufacturer,
+        sourceUrl: registryRecord.sourceUrl,
+        retrievedAt: registryRecord.retrievedAt,
+        lastVerifiedAt: registryRecord.lastVerifiedAt,
+        verifiedAt: registryRecord.verifiedAt,
+        verifiedBy: registryRecord.verifiedBy,
+        evidenceClassification: registryRecord.evidenceClassification,
+        isProductionEligible: registryRecord.isProductionEligible,
+        fieldProvenance: registryRecord.fieldProvenance,
+      }).isValid
+    : registryRecord.evidenceClassification !== 'unverified_record' &&
+      registryRecord.evidenceClassification !== 'historical_official_record';
+
+  if (!isRecordEligibleForPositiveMatch) {
+    flags.push('INCOMPLETE_SOURCE');
+    const summary = `The statutory reference record for ${input.registrationNumber} is unverified, historical, or incomplete and cannot support a positive registration match.`;
+    return {
+      verdict: 'could_not_confirm',
+      verdictNumber: 4,
+      verdictDefinition: LEGACY_VERDICT_DEFINITIONS[4],
+      displayLabel: V4_VERDICT_DEFINITIONS.could_not_confirm.displayLabel,
+      reasonCode: REASON_CODES.UNCONFIRMED_RECORD_INCOMPLETE,
+      explanation: summary,
+      summary,
+      mandatoryCaveat: false,
+      evidenceReferences: evidenceRefs,
+      registryRecord,
+      discrepancies,
+      flags: flags as FlagCode[],
+      sourceMetadata,
+      matchingRuleVersion: MATCHING_RULE_VERSION,
+      decisionEngineVersion: DECISION_ENGINE_VERSION,
+      nextRecommendedAction: 'Check the official NAFDAC portal to verify current authorization.',
       gateChecks,
     };
   }

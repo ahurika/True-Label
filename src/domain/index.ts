@@ -17,3 +17,5 @@ export * from './reason-codes';
 export * from './evidence-validation';
 export * from './verdict-engine';
 export * from './verdict-types';
+export * from './alert-provenance';
+export * from './registry-provenance';

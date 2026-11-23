@@ -15,6 +15,13 @@ generator client {
 
 // ── Enums ───────────────────────────────────────────────────
 
+enum EvidenceClassification {
+  independently_verified_official
+  historical_official_record
+  synthetic_test_fixture
+  unverified_record
+}
+
 enum RegistryStatus {
   active
   inactive
@@ -126,6 +133,10 @@ model RegistryRecord {
   sourceUrl              String
   retrievedAt            DateTime
   lastVerifiedAt         DateTime
+  evidenceClassification EvidenceClassification @default(unverified_record)
+  isProductionEligible   Boolean                @default(false)
+  verifiedAt             DateTime?
+  verifiedBy             String?
   fieldProvenance        Json
   referenceProducts      ReferenceProduct[]
   createdAt              DateTime           @default(now())
@@ -134,6 +145,8 @@ model RegistryRecord {
   @@unique([sourceId, category, registrationNumber])
   @@index([category, registrationNumber])
   @@index([normalizedName])
+  @@index([evidenceClassification])
+  @@index([isProductionEligible])
 }
 
 model ReferenceProduct {
@@ -168,15 +181,23 @@ model Alert {
   genuineBrands     String[]
   affectedPackNames String[]
   batchNumbers      String[]
-  sourceUrl         String
-  retrievedAt       DateTime
-  lastCheckedAt     DateTime
-  evidence          Json
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  sourceUrl              String
+  retrievedAt            DateTime
+  lastCheckedAt          DateTime
+  evidenceClassification EvidenceClassification @default(unverified_record)
+  isSyntheticFixture     Boolean                @default(false)
+  isProductionEligible   Boolean                @default(false)
+  verifiedAt             DateTime?
+  verifiedBy             String?
+  evidence               Json
+  createdAt              DateTime               @default(now())
+  updatedAt              DateTime               @updatedAt
 
   @@index([issuedOn])
   @@index([category])
+  @@index([evidenceClassification])
+  @@index([isSyntheticFixture])
+  @@index([isProductionEligible])
 }
 
 model ShareRecord {

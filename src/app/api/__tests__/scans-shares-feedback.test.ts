@@ -43,15 +43,13 @@ describe('PRD v4.0 RESTful API Contracts', () => {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        registrationNumber: '04-1234',
+        registrationNumber: '01-0812',
         isNumberConfirmedByUser: true,
-        brand: 'Emzor',
-        productName: 'Paracetamol 500mg Tablets',
-        manufacturer: 'Emzor Pharmaceutical Industries Ltd',
+        brand: 'Golden Penny',
+        productName: 'Semovita 1kg Pack',
+        manufacturer: 'Flour Mills of Nigeria Plc',
         isIdentityConfirmedByUser: true,
-        category: 'medicine',
-        medicineStrength: '500mg',
-        isStrengthConfirmedByUser: true,
+        category: 'food',
         batchNumber: 'B999',
       }),
     });
@@ -97,7 +95,7 @@ describe('PRD v4.0 RESTful API Contracts', () => {
     expect(res.status).toBe(200);
     const data = await res.json();
     expect(data.success).toBe(true);
-    expect(data.data.confirmedPack.brand).toBe('Emzor');
+    expect(data.data.confirmedPack.brand).toBe('Golden Penny');
     expect(data.data.verdictResult.verdict).toBe('registry_match');
     expect(data.data.capturedPreviewUrl).toBeUndefined(); // Zero photo retention
   });
