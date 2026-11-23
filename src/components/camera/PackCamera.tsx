@@ -119,7 +119,8 @@ export const PackCamera: React.FC<PackCameraProps> = ({
   isProcessing = false,
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
   const [activeSlot, setActiveSlot] = useState<'front' | 'back' | 'batch'>('front');
@@ -138,8 +139,15 @@ export const PackCamera: React.FC<PackCameraProps> = ({
   const [hasMultipleCameras, setHasMultipleCameras] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [qualityFeedback, setQualityFeedback] = useState<string | null>(null);
+  const [isSecureContext, setIsSecureContext] = useState<boolean>(true);
 
+  // Check secure context and device camera support on mount
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const isSecure = window.isSecureContext || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      setIsSecureContext(isSecure);
+    }
+
     if (typeof navigator !== 'undefined' && navigator.mediaDevices?.enumerateDevices) {
       navigator.mediaDevices
         .enumerateDevices()
@@ -153,8 +161,13 @@ export const PackCamera: React.FC<PackCameraProps> = ({
 
   const startCamera = useCallback(async () => {
     setErrorMessage(null);
+
+    // If browser doesn't support getUserMedia or is on unencrypted HTTP on a phone
     if (!navigator.mediaDevices?.getUserMedia) {
-      setErrorMessage('Camera access is not supported by your browser. Please use the file upload option.');
+      setCameraActive(false);
+      setErrorMessage(
+        'Live viewfinder requires HTTPS on mobile devices. Use "Take photo with phone camera" below to open your camera app directly.'
+      );
       return;
     }
 
@@ -177,14 +190,20 @@ export const PackCamera: React.FC<PackCameraProps> = ({
 
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
-        await videoRef.current.play();
-        setCameraActive(true);
+        try {
+          await videoRef.current.play();
+        } catch (playErr) {
+          console.warn('[PackCamera] video.play() warning:', playErr);
+        }
       }
+
+      setCameraActive(true);
+      setErrorMessage(null);
     } catch (err: unknown) {
       console.warn('[PackCamera] Could not start camera:', err);
       setCameraActive(false);
       setErrorMessage(
-        'Camera permission was denied or camera is in use. You can upload an image file instead.'
+        'Camera permission was denied or camera is in use. You can tap "Take photo with phone camera" to use your device camera directly.'
       );
     }
   }, [facingMode]);
@@ -197,6 +216,7 @@ export const PackCamera: React.FC<PackCameraProps> = ({
     setCameraActive(false);
   }, []);
 
+  // Attempt to start camera automatically when mounted
   useEffect(() => {
     startCamera();
     return () => {
@@ -249,17 +269,21 @@ export const PackCamera: React.FC<PackCameraProps> = ({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 15 * 1024 * 1024) {
-      setErrorMessage('File size exceeds 15 MB limit. Please select a smaller photo.');
+    if (file.size > 20 * 1024 * 1024) {
+      setErrorMessage('File size exceeds 20 MB limit. Please select a smaller photo.');
       return;
     }
 
     try {
       const { dataUrl, sizeKb, brightness } = await compressImageToBudget(file, 1600, 0.82);
       assignImageToActiveSlot(dataUrl, sizeKb, brightness);
+      setErrorMessage(null);
     } catch (err: unknown) {
       console.error('[PackCamera] File compression error:', err);
       setErrorMessage('Could not process selected image file.');
+    } finally {
+      // Clear input so same file can be re-selected if retrying
+      e.target.value = '';
     }
   };
 
@@ -289,6 +313,8 @@ export const PackCamera: React.FC<PackCameraProps> = ({
       batch: slots.batch.dataUrl,
     });
   };
+
+  const currentSlotHasImage = Boolean(slots[activeSlot].dataUrl);
 
   return (
     <div className="tl-stack-default">
@@ -324,7 +350,7 @@ export const PackCamera: React.FC<PackCameraProps> = ({
         })}
       </div>
 
-      {/* Live Viewfinder or Captured Slot Preview */}
+      {/* Viewfinder or Captured Slot Preview */}
       <div
         style={{
           position: 'relative',
@@ -338,8 +364,56 @@ export const PackCamera: React.FC<PackCameraProps> = ({
           justifyContent: 'center',
         }}
       >
-        {slots[activeSlot].dataUrl ? (
-          // Captured Preview for active slot
+        {/* VIDEO ELEMENT: ALWAYS MOUNTED in the DOM to avoid ref/lifecycle race conditions */}
+        <video
+          ref={videoRef}
+          autoPlay
+          playsInline
+          muted
+          onLoadedMetadata={() => {
+            videoRef.current?.play().catch(() => {});
+          }}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            display: cameraActive && !currentSlotHasImage ? 'block' : 'none',
+          }}
+        />
+
+        {/* Framing guide overlay when live camera is visible */}
+        {cameraActive && !currentSlotHasImage && (
+          <>
+            <div
+              style={{
+                position: 'absolute',
+                inset: '14%',
+                border: '2px dashed rgba(255, 255, 255, 0.75)',
+                borderRadius: '8px',
+                pointerEvents: 'none',
+              }}
+            />
+            <div
+              style={{
+                position: 'absolute',
+                bottom: 8,
+                left: '50%',
+                transform: 'translateX(-50%)',
+                color: '#fff',
+                fontSize: '11px',
+                backgroundColor: 'rgba(0, 0, 0, 0.65)',
+                padding: '4px 10px',
+                borderRadius: '12px',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              Frame: {slots[activeSlot].label}
+            </div>
+          </>
+        )}
+
+        {/* Captured image preview for current slot */}
+        {currentSlotHasImage && (
           <div style={{ position: 'relative', width: '100%', height: '100%' }}>
             <img
               src={slots[activeSlot].dataUrl}
@@ -368,7 +442,7 @@ export const PackCamera: React.FC<PackCameraProps> = ({
                 bottom: 12,
                 left: '50%',
                 transform: 'translateX(-50%)',
-                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                backgroundColor: 'rgba(255, 255, 255, 0.95)',
                 color: '#000',
                 padding: '6px 14px',
                 borderRadius: '4px',
@@ -380,49 +454,27 @@ export const PackCamera: React.FC<PackCameraProps> = ({
               Retake {slots[activeSlot].label}
             </button>
           </div>
-        ) : cameraActive ? (
-          // Live Video Stream
-          <>
-            <video
-              ref={videoRef}
-              playsInline
-              muted
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            />
-            {/* Viewfinder target framing guide */}
-            <div
-              style={{
-                position: 'absolute',
-                inset: '14%',
-                border: '2px dashed rgba(255, 255, 255, 0.75)',
-                borderRadius: '8px',
-                pointerEvents: 'none',
-              }}
-            />
-            <div
-              style={{
-                position: 'absolute',
-                bottom: 8,
-                left: '50%',
-                transform: 'translateX(-50%)',
-                color: '#fff',
-                fontSize: '11px',
-                backgroundColor: 'rgba(0, 0, 0, 0.65)',
-                padding: '4px 10px',
-                borderRadius: '12px',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              Frame: {slots[activeSlot].label}
-            </div>
-          </>
-        ) : (
-          <div className="tl-stack-tight" style={{ textAlign: 'center', color: '#888', padding: 16 }}>
+        )}
+
+        {/* Fallback view when camera is inactive and no photo is taken */}
+        {!cameraActive && !currentSlotHasImage && (
+          <div className="tl-stack-tight" style={{ textAlign: 'center', color: '#aaa', padding: 16 }}>
             <CameraIcon size={40} className="tl-mx-auto" />
-            <div className="tl-caption">Camera inactive or unavailable.</div>
-            <Button variant="secondary" onClick={startCamera}>
-              Turn on camera
-            </Button>
+            <div className="tl-caption">
+              {!isSecureContext
+                ? 'Mobile browser requires HTTPS for live viewfinder.'
+                : 'Camera is currently inactive.'}
+            </div>
+            <div className="tl-cluster" style={{ justifyContent: 'center', gap: 8, marginTop: 8 }}>
+              <Button variant="primary" onClick={() => cameraInputRef.current?.click()}>
+                Take photo with phone camera
+              </Button>
+              {isSecureContext && (
+                <Button variant="secondary" onClick={startCamera}>
+                  Try live viewfinder
+                </Button>
+              )}
+            </div>
           </div>
         )}
       </div>
@@ -434,16 +486,17 @@ export const PackCamera: React.FC<PackCameraProps> = ({
         </div>
       )}
 
-      {/* Error alert */}
+      {/* Informative Error or Security Alert */}
       {errorMessage && (
         <div className="tl-callout tl-callout-warning" style={{ fontSize: '13px' }}>
           {errorMessage}
         </div>
       )}
 
-      {/* Camera and Upload Controls */}
+      {/* Action Controls */}
       <div className="tl-stack-tight">
-        {cameraActive && !slots[activeSlot].dataUrl && (
+        {/* Primary capture buttons */}
+        {cameraActive && !currentSlotHasImage && (
           <Button variant="primary" fullWidth onClick={handleCaptureFrame} disabled={isProcessing}>
             Capture {slots[activeSlot].label}
           </Button>
@@ -451,26 +504,44 @@ export const PackCamera: React.FC<PackCameraProps> = ({
 
         <div className="tl-cluster" style={{ gap: 8 }}>
           <Button
-            variant="secondary"
+            variant={cameraActive ? 'secondary' : 'primary'}
             style={{ flex: 1 }}
-            onClick={() => fileInputRef.current?.click()}
+            onClick={() => cameraInputRef.current?.click()}
             disabled={isProcessing}
           >
-            Upload image file
+            Take photo with camera
+          </Button>
+
+          <Button
+            variant="secondary"
+            style={{ flex: 1 }}
+            onClick={() => galleryInputRef.current?.click()}
+            disabled={isProcessing}
+          >
+            Upload from gallery
           </Button>
 
           {hasMultipleCameras && cameraActive && (
             <Button variant="ghost" onClick={toggleCameraFacing} disabled={isProcessing}>
-              Switch camera
+              Flip
             </Button>
           )}
         </div>
 
+        {/* Hidden HTML5 Native File Inputs for maximum mobile reliability */}
         <input
-          ref={fileInputRef}
+          ref={cameraInputRef}
           type="file"
           accept="image/*"
           capture="environment"
+          onChange={handleFileUpload}
+          style={{ display: 'none' }}
+        />
+
+        <input
+          ref={galleryInputRef}
+          type="file"
+          accept="image/*"
           onChange={handleFileUpload}
           style={{ display: 'none' }}
         />

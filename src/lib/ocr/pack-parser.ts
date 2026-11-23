@@ -29,6 +29,27 @@ export type ExtractedPackData = z.infer<typeof ExtractionSchema>;
  * Heuristic/Regex extractor that analyzes OCR text to extract structured pack fields
  */
 export function parsePackText(ocrText: string): ExtractedPackData {
+  // 0. If input is a valid JSON string (e.g. from Gemini Vision API), parse directly
+  try {
+    let jsonStr = ocrText.trim();
+    if (jsonStr.startsWith('```json')) {
+      jsonStr = jsonStr.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+    } else if (jsonStr.startsWith('```')) {
+      jsonStr = jsonStr.replace(/^```\s*/, '').replace(/\s*```$/, '');
+    }
+    if (jsonStr.startsWith('{') && jsonStr.endsWith('}')) {
+      const parsedObj = JSON.parse(jsonStr);
+      if (parsedObj && typeof parsedObj === 'object') {
+        const validated = ExtractionSchema.safeParse(parsedObj);
+        if (validated.success) {
+          return validated.data;
+        }
+      }
+    }
+  } catch {
+    // If not valid JSON, proceed with heuristic regex extraction below
+  }
+
   const clean = ocrText.replace(/\r\n/g, '\n');
   const lines = clean.split('\n').map((l) => l.trim()).filter(Boolean);
 

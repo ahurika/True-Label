@@ -125,8 +125,8 @@ Extract printed pack text accurately and output strictly valid JSON matching the
             parts: [
               { text: prompt },
               {
-                inline_data: {
-                  mime_type: 'image/jpeg',
+                inlineData: {
+                  mimeType: 'image/jpeg',
                   data: imageBase64,
                 },
               },
