@@ -1,0 +1,114 @@
+/* ============================================================
+   TRUELABEL TYPOGRAPHY
+   DM Sans throughout. Essential text never below 14px.
+   Mobile layouts must grow rather than shrink the copy.
+   ============================================================ */
+
+/* ── Type roles ──────────────────────────────────────────── */
+
+.tl-display {
+  font-size: var(--text-display);
+  line-height: var(--lh-display);
+  font-weight: var(--fw-display);
+  letter-spacing: -0.01em;
+}
+
+.tl-title-1 {
+  font-size: var(--text-title-1);
+  line-height: var(--lh-title-1);
+  font-weight: var(--fw-title-1);
+  letter-spacing: -0.01em;
+}
+
+.tl-title-2 {
+  font-size: var(--text-title-2);
+  line-height: var(--lh-title-2);
+  font-weight: var(--fw-title-2);
+}
+
+.tl-title-3 {
+  font-size: var(--text-title-3);
+  line-height: var(--lh-title-3);
+  font-weight: var(--fw-title-3);
+}
+
+.tl-body {
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
+  font-weight: var(--fw-body);
+}
+
+.tl-body-bold {
+  font-size: var(--text-body-bold);
+  line-height: var(--lh-body-bold);
+  font-weight: var(--fw-body-bold);
+}
+
+.tl-label {
+  font-size: var(--text-label);
+  line-height: var(--lh-label);
+  font-weight: var(--fw-label);
+}
+
+.tl-label-bold {
+  font-size: var(--text-label-bold);
+  line-height: var(--lh-label-bold);
+  font-weight: var(--fw-label-bold);
+}
+
+.tl-caption {
+  font-size: var(--text-caption);
+  line-height: var(--lh-caption);
+  font-weight: var(--fw-caption);
+}
+
+/* ── Code / Registration numbers ─────────────────────────── */
+/* Same family (DM Sans), bold, prominent sizing.
+   Note on OpenType features: The bundled DM Sans font tables do not include
+   OpenType 'tnum' (tabular numerals) or 'zero' (slashed zero) substitutions.
+   Standard font-variant-numeric is declared without artificial simulation or fake slashes. */
+
+.tl-code {
+  font-family: var(--font-sans);
+  font-size: var(--text-code);
+  line-height: var(--lh-code);
+  font-weight: var(--fw-code);
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.tl-numeric {
+  font-family: var(--font-sans);
+  font-size: var(--text-numeric);
+  line-height: var(--lh-numeric);
+  font-weight: var(--fw-numeric);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Semantic heading hierarchy ──────────────────────────── */
+
+h1 { font-size: var(--text-title-1); line-height: var(--lh-title-1); font-weight: var(--fw-title-1); letter-spacing: -0.01em; }
+h2 { font-size: var(--text-title-2); line-height: var(--lh-title-2); font-weight: var(--fw-title-2); }
+h3 { font-size: var(--text-title-3); line-height: var(--lh-title-3); font-weight: var(--fw-title-3); }
+
+/* ── Link styling ────────────────────────────────────────── */
+
+.tl-link {
+  color: var(--color-link);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.tl-link:hover {
+  text-decoration-thickness: 2px;
+}
+
+/* ── Muted / secondary text ──────────────────────────────── */
+
+.tl-text-muted {
+  color: var(--color-text-muted);
+}
+
+.tl-text-secondary {
+  color: var(--color-text-secondary);
+}

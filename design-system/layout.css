@@ -1,0 +1,117 @@
+/* ============================================================
+   TRUELABEL LAYOUT
+   Mobile-first containers, stacks, clusters, and
+   responsive grid primitives.
+   ============================================================ */
+
+/* ── Page container ──────────────────────────────────────── */
+
+.tl-page {
+  width: 100%;
+  max-width: var(--container-sm);
+  margin-inline: auto;
+  padding-inline: var(--space-2);
+}
+
+@media (min-width: 768px) {
+  .tl-page {
+    max-width: var(--container-md);
+    padding-inline: var(--space-3);
+  }
+}
+
+@media (min-width: 1024px) {
+  .tl-page {
+    max-width: var(--container-lg);
+    padding-inline: var(--space-4);
+  }
+}
+
+/* ── App shell ───────────────────────────────────────────── */
+
+.tl-app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background-color: var(--color-page);
+}
+
+.tl-app-main {
+  flex: 1;
+  padding-top: var(--size-header);
+  padding-bottom: var(--size-nav);
+}
+
+/* ── Stack (vertical flow) ───────────────────────────────── */
+
+.tl-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.tl-stack-tight {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.tl-stack-loose {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* ── Cluster (horizontal flow, wraps) ────────────────────── */
+
+.tl-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  align-items: center;
+}
+
+/* ── Section with divider ────────────────────────────────── */
+
+.tl-section {
+  padding-block: var(--space-3);
+}
+
+.tl-section + .tl-section {
+  border-top: 1px solid var(--color-divider);
+}
+
+/* ── Divider ─────────────────────────────────────────────── */
+
+.tl-divider {
+  border: none;
+  border-top: 1px solid var(--color-divider);
+  margin-block: var(--space-2);
+}
+
+.tl-divider-strong {
+  border: none;
+  border-top: 2px solid var(--color-border-strong);
+  margin-block: var(--space-2);
+}
+
+/* ── Double-rule (The Register treatment) ────────────────── */
+
+.tl-double-rule {
+  border: none;
+  border-top: 2px solid var(--color-border-strong);
+  border-bottom: 1px solid var(--color-border);
+  height: 0;
+  padding-top: 3px;
+  margin-block: var(--space-2);
+}
+
+/* ── Safe areas ──────────────────────────────────────────── */
+
+.tl-safe-top {
+  padding-top: env(safe-area-inset-top, 0);
+}
+
+.tl-safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
