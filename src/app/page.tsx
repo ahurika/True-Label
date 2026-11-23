@@ -113,11 +113,20 @@ export default function HomePage() {
               Enter product details manually
             </Button>
           </Link>
-          <Link href="/how-it-works" className="tl-w-full">
-            <Button variant="ghost" fullWidth>
+          <div style={{ textAlign: 'left', marginTop: '4px' }}>
+            <Link
+              href="/how-it-works"
+              style={{
+                display: 'inline-block',
+                fontWeight: 300,
+                textDecoration: 'underline',
+                fontSize: '14px',
+                color: 'var(--color-text-muted, #94a3b8)',
+              }}
+            >
               How TrueLabel works
-            </Button>
-          </Link>
+            </Link>
+          </div>
         </Stack>
 
         {/* Disclaimer / Stance */}

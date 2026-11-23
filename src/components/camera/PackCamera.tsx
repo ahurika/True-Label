@@ -495,22 +495,25 @@ export const PackCamera: React.FC<PackCameraProps> = ({
 
       {/* Action Controls */}
       <div className="tl-stack-tight">
-        {/* Primary capture buttons */}
+        {/* Primary live viewfinder scan action */}
         {cameraActive && !currentSlotHasImage && (
           <Button variant="primary" fullWidth onClick={handleCaptureFrame} disabled={isProcessing}>
-            Capture {slots[activeSlot].label}
+            Scan {slots[activeSlot].label}
           </Button>
         )}
 
         <div className="tl-cluster" style={{ gap: 8 }}>
-          <Button
-            variant={cameraActive ? 'secondary' : 'primary'}
-            style={{ flex: 1 }}
-            onClick={() => cameraInputRef.current?.click()}
-            disabled={isProcessing}
-          >
-            Take photo with camera
-          </Button>
+          {/* Only show camera trigger button when live camera is inactive */}
+          {!cameraActive && (
+            <Button
+              variant="primary"
+              style={{ flex: 1 }}
+              onClick={() => cameraInputRef.current?.click()}
+              disabled={isProcessing}
+            >
+              Take photo with camera
+            </Button>
+          )}
 
           <Button
             variant="secondary"

@@ -1,29 +1,22 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { AppShell, Stack } from '@/components/layout';
-import { Button, NumberPlate, CheckRow, Surface } from '@/components/ui';
+import { Button, NumberPlate, SpecRow, Surface } from '@/components/ui';
 import { VerdictSlip } from '@/components/verdict';
-import { EqualIcon, MinusIcon, BellIcon, NotEqualIcon, FlagIcon } from '@/components/icons';
+import { FlagIcon } from '@/components/icons';
 import { getPackSession, resetPackSession, PackSessionData } from '@/lib/session/pack-store';
 
 /**
  * Screen D01: The available evidence (PRD v4.0 §8)
- * Renders the deterministic verdict evaluated by the engine.
- * Four Locked Verdicts:
- * - Priority 1: alert_match (Matches a NAFDAC alert)
- * - Priority 2: registration_discrepancy (Registration details don't match)
- * - Priority 3: could_not_confirm (Could not confirm)
- * - Priority 4: registry_match (Registry details match + mandatory caveat)
+ * Clean, simplified result view displaying authoritative verdict and confirmed product information.
+ * Follows user directive: shows product information cleanly without excessive clickable elements,
+ * concluding with exactly two primary actions: "Retake Photo" and "Close".
  */
 export default function ResultPage() {
   const router = useRouter();
   const [pack, setPack] = useState<PackSessionData | null>(null);
-  const [shareUrl, setShareUrl] = useState<string | null>(null);
-  const [isSharing, setIsSharing] = useState(false);
-  const [shareFeedback, setShareFeedback] = useState<string | null>(null);
 
   useEffect(() => {
     const session = getPackSession();
@@ -34,62 +27,23 @@ export default function ResultPage() {
     }
   }, []);
 
-  const handleShare = async () => {
-    if (!pack || !pack.verdictResult) return;
-    setIsSharing(true);
-    setShareFeedback(null);
-
-    try {
-      const res = await fetch('/api/shares', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          scanId: pack.scanId,
-          confirmedPack: {
-            registrationNumber: pack.registrationNumber,
-            brand: pack.brand,
-            productName: pack.productName,
-            manufacturer: pack.manufacturer,
-            category: pack.category,
-            medicineStrength: pack.medicineStrength,
-            dosageForm: pack.dosageForm,
-            batchNumber: pack.batchNumber,
-            expiryDate: pack.expiryDate,
-            isManuallyEntered: pack.isManuallyEntered,
-          },
-          verdictResult: pack.verdictResult,
-        }),
-      });
-
-      const data = await res.json();
-      if (data.success && data.shareUrl) {
-        setShareUrl(data.shareUrl);
-        if (navigator.clipboard) {
-          await navigator.clipboard.writeText(data.shareUrl);
-          setShareFeedback('Share link copied to clipboard (valid for 30 days).');
-        } else {
-          setShareFeedback('Share link created (valid for 30 days).');
-        }
-      }
-    } catch (err) {
-      console.error('[Share] Failed to create share link:', err);
-      setShareFeedback('Could not create share link.');
-    } finally {
-      setIsSharing(false);
-    }
-  };
-
-  const handleStartNewCheck = () => {
+  const handleRetakePhoto = () => {
     resetPackSession();
     router.push('/scan/capture');
+  };
+
+  const handleClose = () => {
+    resetPackSession();
+    router.push('/');
   };
 
   // If no active scan result exists, render honest empty state
   if (!pack || !pack.verdictResult) {
     return (
       <AppShell
+        hideNav={true}
         headerProps={{
-          title: 'The available evidence',
+          title: 'Verification Result',
           backHref: '/',
         }}
       >
@@ -108,16 +62,12 @@ export default function ResultPage() {
               Start a new check to compare packaging against statutory records and public safety alerts.
             </div>
             <div className="tl-stack-tight">
-              <Link href="/scan/capture" className="tl-w-full">
-                <Button variant="primary" fullWidth>
-                  Scan a pack
-                </Button>
-              </Link>
-              <Link href="/review/enter" className="tl-w-full">
-                <Button variant="secondary" fullWidth>
-                  Type registration number
-                </Button>
-              </Link>
+              <Button variant="primary" fullWidth onClick={handleRetakePhoto}>
+                Retake Photo
+              </Button>
+              <Button variant="secondary" fullWidth onClick={handleClose}>
+                Close
+              </Button>
             </div>
           </div>
         </Stack>
@@ -127,16 +77,15 @@ export default function ResultPage() {
 
   const result = pack.verdictResult;
   const verdictCode = result.verdict;
-  const isRegistered = verdictCode === 'registry_match';
   const isAlert = verdictCode === 'alert_match';
   const isDiscrepancy = verdictCode === 'registration_discrepancy';
-  const isUnconfirmed = verdictCode === 'could_not_confirm';
 
   return (
     <AppShell
+      hideNav={true}
       headerProps={{
         title: 'The available evidence',
-        backHref: '/review/confirm',
+        backHref: '/',
       }}
     >
       <Stack gap="default" className="tl-mt-2">
@@ -146,7 +95,7 @@ export default function ResultPage() {
 
         <h1 className="tl-display">The available evidence</h1>
 
-        {/* Official Verdict Slip */}
+        {/* Official Verdict Slip with Mandatory Copied-Number Caveat on Positive Verdict */}
         <VerdictSlip
           verdict={verdictCode}
           title={result.displayLabel}
@@ -156,6 +105,58 @@ export default function ResultPage() {
 
         {/* Confirmed Registration Number Plate */}
         <NumberPlate value={pack.registrationNumber || 'NOT DETECTED'} />
+
+        {/* Product Information */}
+        <Surface>
+          <div className="tl-label-bold tl-mb-1">Product Details</div>
+          {pack.brand && <SpecRow term="Brand" value={pack.brand} />}
+          {pack.productName && <SpecRow term="Product name" value={pack.productName} />}
+          {pack.manufacturer && <SpecRow term="Manufacturer" value={pack.manufacturer} />}
+          {pack.category && <SpecRow term="Category" value={pack.category.toUpperCase()} />}
+          {pack.batchNumber && <SpecRow term="Batch / code" value={pack.batchNumber} />}
+          {pack.expiryDate && <SpecRow term="Expiry date" value={pack.expiryDate} />}
+          {pack.medicineStrength && <SpecRow term="Strength" value={pack.medicineStrength} />}
+        </Surface>
+
+        {/* Verbatim Directions & Mandatory Pharmacist Notice for Medicines */}
+        {pack.category === 'medicine' && (
+          <>
+            {pack.directions && (
+              <Surface>
+                <div className="tl-label-bold">Verbatim Printed Directions</div>
+                <p className="tl-body tl-mt-1" style={{ whiteSpace: 'pre-line' }}>
+                  {pack.directions}
+                </p>
+              </Surface>
+            )}
+            <div className="tl-caveat">
+              <strong>Mandatory pharmacist notice:</strong> For questions about how to use this medicine, ask a licensed pharmacist or doctor. Do not rely on this app to change the directions on the pack.
+            </div>
+          </>
+        )}
+
+        {/* Recall Details for Verdict 1: Matches a NAFDAC alert */}
+        {isAlert && result.matchedAlert && (
+          <Surface>
+            <div className="tl-label-bold tl-mb-1">NAFDAC Recall Notice</div>
+            <SpecRow term="Alert Reference" value={result.matchedAlert.alertNumber || 'Official Recall Alert'} />
+            <SpecRow term="Recall Title" value={result.matchedAlert.title || 'Contaminated Product Warning'} />
+            <SpecRow
+              term="Matched packaging evidence"
+              value={`${result.matchedAlert.matchedField === 'batch_number' ? 'Batch number' : 'Pack name'}: ${result.matchedAlert.matchedValue}`}
+            />
+          </Surface>
+        )}
+
+        {/* Discrepancy Details for Verdict 2: Registration details don't match */}
+        {isDiscrepancy && result.discrepancies && result.discrepancies.length > 0 && (
+          <Surface>
+            <div className="tl-label-bold tl-mb-1">Discrepancy Details</div>
+            {result.discrepancies.map((disc, idx) => (
+              <SpecRow key={idx} term={`Issue ${idx + 1}`} value={disc} />
+            ))}
+          </Surface>
+        )}
 
         {/* Independent Flags (PRD v4.0 §6.4) */}
         {result.flags && result.flags.length > 0 && (
@@ -185,165 +186,19 @@ export default function ResultPage() {
           </div>
         )}
 
-        {/* Evidence Breakdown for Verdict 4: Registry details match */}
-        {isRegistered && (
-          <Surface>
-            <div className="tl-label-bold tl-mb-1">What we checked</div>
-            <CheckRow
-              icon={<EqualIcon size={20} className="tl-text-muted" />}
-              label="Registration number"
-              value={`Matches confirmed pack number exactly (${pack.registrationNumber})`}
-            />
-            <div className="tl-divider" />
-            <CheckRow
-              icon={<EqualIcon size={20} className="tl-text-muted" />}
-              label="Brand &amp; product identity"
-              value={`${pack.brand} — ${pack.productName}`}
-            />
-            {pack.manufacturer && (
-              <>
-                <div className="tl-divider" />
-                <CheckRow
-                  icon={<EqualIcon size={20} className="tl-text-muted" />}
-                  label="Manufacturer"
-                  value={pack.manufacturer}
-                />
-              </>
-            )}
-            <div className="tl-divider" />
-            <CheckRow
-              icon={<EqualIcon size={20} className="tl-text-muted" />}
-              label="Record status"
-              value="Active and not expired in statutory source"
-            />
-            <div className="tl-divider" />
-            <CheckRow
-              icon={<MinusIcon size={20} className="tl-text-muted" />}
-              label="NAFDAC alerts"
-              value="No active public recall notices match this batch or pack name"
-            />
-            <div className="tl-divider" />
-            <CheckRow
-              icon={<MinusIcon size={20} className="tl-text-muted" />}
-              label="Data source"
-              value={result.sourceMetadata?.sourceName || 'Curated NAFDAC gazette reference records'}
-            />
-          </Surface>
-        )}
-
-        {/* Evidence Breakdown for Verdict 1: Matches a NAFDAC alert */}
-        {isAlert && (
-          <Surface>
-            <div className="tl-label-bold tl-mb-1">NAFDAC Recall Notice</div>
-            <CheckRow
-              icon={<BellIcon size={20} className="tl-text-muted" />}
-              label="Alert Reference"
-              value={result.matchedAlert?.alertNumber || 'Official Recall Alert'}
-            />
-            <div className="tl-divider" />
-            <CheckRow
-              icon={<BellIcon size={20} className="tl-text-muted" />}
-              label="Recall Title"
-              value={result.matchedAlert?.title || 'Contaminated Product Warning'}
-            />
-            <div className="tl-divider" />
-            <CheckRow
-              icon={<BellIcon size={20} className="tl-text-muted" />}
-              label="Matched packaging evidence"
-              value={`${result.matchedAlert?.matchedField === 'batch_number' ? 'Batch number' : 'Pack name'}: ${result.matchedAlert?.matchedValue}`}
-            />
-            {result.matchedAlert?.officialSourceUrl && (
-              <>
-                <div className="tl-divider" />
-                <div className="tl-caption tl-mt-1">
-                  <a
-                    href={result.matchedAlert.officialSourceUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="tl-link"
-                  >
-                    View official NAFDAC bulletin &rarr;
-                  </a>
-                </div>
-              </>
-            )}
-          </Surface>
-        )}
-
-        {/* Evidence Breakdown for Verdict 2: Registration details don't match */}
-        {isDiscrepancy && (
-          <Surface>
-            <div className="tl-label-bold tl-mb-1">Discrepancy Conflict Details</div>
-            {result.discrepancies?.map((disc, idx) => (
-              <CheckRow
-                key={idx}
-                icon={<NotEqualIcon size={20} className="tl-text-muted" />}
-                label={`Issue ${idx + 1}`}
-                value={disc}
-              />
-            ))}
-          </Surface>
-        )}
-
-        {/* Evidence Breakdown for Verdict 3: Could not confirm */}
-        {isUnconfirmed && (
-          <Surface>
-            <div className="tl-label-bold tl-mb-1">Why confirmation was not possible</div>
-            <p className="tl-caption tl-text-muted">
-              {result.explanation ||
-                'Available evidence is insufficient to complete a comparison against verified statutory records. Absence from a partial dataset never implies non-registration.'}
-            </p>
-          </Surface>
-        )}
-
-        {/* Source Freshness Information (PRD v4.0 §8) */}
-        <div className="tl-surface">
-          <div className="tl-label-bold">Source Provenance &amp; Freshness</div>
-          <div className="tl-caption tl-text-muted tl-mt-1">
-            <strong>Source:</strong> {result.sourceMetadata?.sourceName || 'Curated Statutory Reference Records'}
-          </div>
-          <div className="tl-caption tl-text-muted">
-            <strong>Coverage:</strong> {result.sourceMetadata?.sourceCoverage?.toUpperCase() || 'PARTIAL'} (absence does not prove non-registration)
-          </div>
-          <div className="tl-caption tl-text-muted">
-            <strong>Engine:</strong> {result.decisionEngineVersion || 'v4.0.0-deterministic'}
-          </div>
+        {/* Subtle Provenance & Freshness Footer */}
+        <div className="tl-caption tl-text-muted" style={{ textAlign: 'center', margin: '8px 0' }}>
+          Source: {result.sourceMetadata?.sourceName || 'Curated Statutory Reference Records'} · Coverage: {result.sourceMetadata?.sourceCoverage?.toUpperCase() || 'PARTIAL'} (absence does not prove non-registration)
         </div>
 
-        {/* Share feedback confirmation */}
-        {shareFeedback && (
-          <div className="tl-callout tl-callout-info" style={{ fontSize: '13px' }}>
-            {shareFeedback}
-            {shareUrl && (
-              <div className="tl-mt-1">
-                <a href={shareUrl} target="_blank" rel="noopener noreferrer" className="tl-link">
-                  Open share link
-                </a>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Next recommended action CTAs */}
+        {/* Result Action CTAs: Exactly Two Actions */}
         <Stack gap="tight" className="tl-mt-2">
-          <Link href="/result/evidence" className="tl-w-full">
-            <Button variant="secondary" fullWidth>
-              Inspect documentary evidence
-            </Button>
-          </Link>
-
-          <Button variant="secondary" fullWidth onClick={handleShare} disabled={isSharing}>
-            {isSharing ? 'Creating link...' : 'Share read-only check'}
+          <Button variant="primary" fullWidth onClick={handleRetakePhoto}>
+            Retake Photo
           </Button>
 
-          <Link href="/report" className="tl-w-full">
-            <Button variant="ghost" fullWidth>
-              Report a concern to NAFDAC
-            </Button>
-          </Link>
-
-          <Button variant="ghost" fullWidth onClick={handleStartNewCheck}>
-            Check another pack
+          <Button variant="secondary" fullWidth onClick={handleClose}>
+            Close
           </Button>
         </Stack>
       </Stack>

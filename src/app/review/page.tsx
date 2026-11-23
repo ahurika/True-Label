@@ -133,6 +133,7 @@ export default function ReviewPage() {
 
   return (
     <AppShell
+      hideNav={true}
       headerProps={{
         title: 'Review what was read',
         backHref: '/scan/capture',
@@ -243,27 +244,7 @@ export default function ReviewPage() {
             {isVerifying ? 'Evaluating evidence...' : 'Inspect available evidence'}
           </Button>
 
-          {pack.category === 'medicine' ? (
-            <Button
-              variant="secondary"
-              fullWidth
-              disabled={!numberConfirmed}
-              onClick={() => router.push('/review/medicine')}
-            >
-              Continue to medicine review
-            </Button>
-          ) : (
-            <Button
-              variant="secondary"
-              fullWidth
-              disabled={!numberConfirmed}
-              onClick={() => router.push('/review/confirm')}
-            >
-              Continue to check identity
-            </Button>
-          )}
-
-          <Button variant="ghost" fullWidth onClick={() => router.push('/review/enter')}>
+          <Button variant="secondary" fullWidth onClick={() => router.push('/review/enter')}>
             Edit pack details
           </Button>
 

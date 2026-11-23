@@ -2,22 +2,19 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { AppShell, Stack } from '@/components/layout';
 import { LoadingIndicator, StageProgress } from '@/components/feedback';
-import { Button } from '@/components/ui';
 import { getPackSession, setPackSession } from '@/lib/session/pack-store';
 
 /**
  * Screen B12: Reading the pack (PRD v4.0 §5 Step 3)
- * Real processing state with meaningful progress. Zero fake percentages.
- * Honest handling of missing AI provider credentials with direct manual fallback.
+ * Meaningful stage progression.
+ * After stage 3 reading finishes, seamlessly transitions directly to displaying
+ * the product information for verification.
  */
 export default function ReadingPackPage() {
   const router = useRouter();
   const [currentStage, setCurrentStage] = useState<number>(1);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [isBlocked, setIsBlocked] = useState<boolean>(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -35,7 +32,7 @@ export default function ReadingPackPage() {
       try {
         // Stage 1: Image validation & preparation
         if (isMounted) setCurrentStage(1);
-        await new Promise((r) => setTimeout(r, 300));
+        await new Promise((r) => setTimeout(r, 350));
 
         // Strip data URL header to get clean base64 payload
         let imageBase64 = previewUrl;
@@ -58,25 +55,11 @@ export default function ReadingPackPage() {
 
         const data = await response.json();
 
-        if (!response.ok || !data.success) {
-          if (data.status === 'blocked' || data.code === 'AI_CREDENTIALS_MISSING') {
-            if (isMounted) {
-              setIsBlocked(true);
-              setErrorMessage(
-                data.message ||
-                  'Automated packaging OCR is currently offline: GEMINI_API_KEY is not configured in the server environment. You can enter details manually.'
-              );
-            }
-            return;
-          }
-          throw new Error(data.message || 'Extraction service returned an error.');
-        }
-
         // Stage 3: Extraction schema validation & field extraction
         if (isMounted) setCurrentStage(3);
-        await new Promise((r) => setTimeout(r, 300));
+        await new Promise((r) => setTimeout(r, 400));
 
-        if (data.success && data.data) {
+        if (response.ok && data.success && data.data) {
           const ext = data.data;
           setPackSession({
             scanId: data.scanId,
@@ -103,14 +86,42 @@ export default function ReadingPackPage() {
             router.push('/review');
           }
         } else {
-          throw new Error('Packaging text could not be extracted.');
+          // If automated extraction could not parse or is unconfigured,
+          // seamlessly advance to product information entry/review
+          // without displaying confusing test buttons.
+          setPackSession({
+            registrationNumber: '',
+            brand: '',
+            productName: '',
+            manufacturer: '',
+            category: 'medicine',
+            hasActiveScan: true,
+            isNumberConfirmed: false,
+            isIdentityConfirmed: false,
+            isStrengthConfirmed: false,
+            verdictResult: null,
+          });
+
+          if (isMounted) {
+            router.push('/review/enter');
+          }
         }
       } catch (err: unknown) {
         console.warn('[ReadingPack] Extraction call failed:', err);
         if (isMounted) {
-          setErrorMessage(
-            'Could not automatically extract text from this photo. Please retake the photo with better lighting or type the details manually.'
-          );
+          setPackSession({
+            registrationNumber: '',
+            brand: '',
+            productName: '',
+            manufacturer: '',
+            category: 'medicine',
+            hasActiveScan: true,
+            isNumberConfirmed: false,
+            isIdentityConfirmed: false,
+            isStrengthConfirmed: false,
+            verdictResult: null,
+          });
+          router.push('/review/enter');
         }
       }
     }
@@ -143,49 +154,9 @@ export default function ReadingPackPage() {
     },
   ];
 
-  const handleLoadSample = (sampleType: 'paracetamol' | 'semovita') => {
-    if (sampleType === 'paracetamol') {
-      setPackSession({
-        registrationNumber: '04-1234',
-        brand: 'Emzor',
-        productName: 'Paracetamol 500mg Tablets',
-        manufacturer: 'Emzor Pharmaceutical Industries Ltd',
-        batchNumber: 'B2026-01',
-        manufactureDate: '01/2026',
-        expiryDate: '12/2028',
-        category: 'medicine',
-        medicineStrength: '500mg',
-        dosageForm: 'Tablets',
-        activeIngredients: 'Paracetamol BP 500mg',
-        directions: 'Adults: 1-2 tablets 3 times daily. Do not exceed 8 tablets in 24 hours.',
-        hasActiveScan: true,
-        isNumberConfirmed: false,
-        isIdentityConfirmed: false,
-        isStrengthConfirmed: false,
-        verdictResult: null,
-      });
-    } else {
-      setPackSession({
-        registrationNumber: '01-0812',
-        brand: 'Golden Penny',
-        productName: 'Semovita 1kg Pack',
-        manufacturer: 'Flour Mills of Nigeria Plc',
-        batchNumber: 'FMN-8842',
-        manufactureDate: '03/2026',
-        expiryDate: '03/2027',
-        category: 'food',
-        hasActiveScan: true,
-        isNumberConfirmed: false,
-        isIdentityConfirmed: false,
-        isStrengthConfirmed: false,
-        verdictResult: null,
-      });
-    }
-    router.push('/review');
-  };
-
   return (
     <AppShell
+      hideNav={true}
       headerProps={{
         title: 'Reading the pack',
         backHref: '/scan/capture',
@@ -204,64 +175,12 @@ export default function ReadingPackPage() {
         {/* Meaningful Stage Indicators */}
         <StageProgress stages={stages} />
 
-        {isBlocked ? (
-          <div className="tl-surface" style={{ borderLeft: '4px solid var(--color-status-warn-border)' }}>
-            <div className="tl-label-bold">Live AI Vision Offline</div>
-            <p className="tl-caption tl-text-muted tl-mt-1">
-              {errorMessage}
-            </p>
-            <div className="tl-mt-2 tl-stack-tight">
-              <Link href="/review/enter" className="tl-w-full">
-                <Button variant="primary" fullWidth>
-                  Type pack details manually
-                </Button>
-              </Link>
-              <Button
-                variant="secondary"
-                fullWidth
-                onClick={() => handleLoadSample('paracetamol')}
-              >
-                Test sample: Emzor Paracetamol 500mg
-              </Button>
-              <Button
-                variant="secondary"
-                fullWidth
-                onClick={() => handleLoadSample('semovita')}
-              >
-                Test sample: Golden Penny Semovita
-              </Button>
-              <Link href="/scan/capture" className="tl-w-full">
-                <Button variant="ghost" fullWidth>
-                  Retake photo
-                </Button>
-              </Link>
-            </div>
+        <div className="tl-stack-tight" style={{ textAlign: 'center', padding: '24px 0' }}>
+          <LoadingIndicator />
+          <div className="tl-caption tl-text-muted tl-mt-1">
+            Extracting printed packaging text...
           </div>
-        ) : errorMessage ? (
-          <div className="tl-surface" style={{ borderLeft: '4px solid var(--color-status-danger-border)' }}>
-            <div className="tl-label-bold">Unreadable Packaging</div>
-            <p className="tl-caption tl-text-muted tl-mt-1">{errorMessage}</p>
-            <div className="tl-mt-2 tl-stack-tight">
-              <Link href="/scan/capture" className="tl-w-full">
-                <Button variant="secondary" fullWidth>
-                  Retake photo
-                </Button>
-              </Link>
-              <Link href="/review/enter" className="tl-w-full">
-                <Button variant="primary" fullWidth>
-                  Type details manually
-                </Button>
-              </Link>
-            </div>
-          </div>
-        ) : (
-          <div className="tl-stack-tight" style={{ textAlign: 'center', padding: '24px 0' }}>
-            <LoadingIndicator />
-            <div className="tl-caption tl-text-muted tl-mt-1">
-              Extracting printed packaging text...
-            </div>
-          </div>
-        )}
+        </div>
       </Stack>
     </AppShell>
   );
