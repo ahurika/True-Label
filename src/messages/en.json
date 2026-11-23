@@ -1,0 +1,32 @@
+{
+  "brand": {
+    "name": "TrueLabel",
+    "tagline": "Check am before you buy am.",
+    "subtitle": "Before you buy, read the label."
+  },
+  "nav": {
+    "home": "Home",
+    "scan": "Scan a product",
+    "howItWorks": "How it works",
+    "reference": "Product checks",
+    "about": "About TrueLabel",
+    "history": "History",
+    "help": "Help & Safety"
+  },
+  "verdict": {
+    "verdict1": "Registered and matches",
+    "verdict2": "Matches a NAFDAC alert",
+    "verdict3": "Number problem",
+    "verdict4": "Could not confirm",
+    "status1": "Registered and matches",
+    "status2": "Matches a NAFDAC alert",
+    "status3": "Number problem",
+    "status4": "Could not confirm",
+    "alert_match": "Matches a NAFDAC alert",
+    "registration_discrepancy": "Registration details don't match",
+    "could_not_confirm": "Could not confirm",
+    "registry_match": "Registry details match",
+    "caveat": "A matching registration record does not prove that the physical contents of this pack are genuine or safe. A registered number can appear on a copied or counterfeit pack.",
+    "pharmacistNotice": "For questions about using this medicine, speak with a pharmacist or qualified healthcare professional. TrueLabel does not prescribe or change medicine directions."
+  }
+}

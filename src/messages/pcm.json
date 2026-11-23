@@ -1,0 +1,32 @@
+{
+  "brand": {
+    "name": "TrueLabel",
+    "tagline": "Check am before you buy am.",
+    "subtitle": "Before you buy am, read wetin dey the pack."
+  },
+  "nav": {
+    "home": "Home",
+    "scan": "Check pack",
+    "howItWorks": "How e dey work",
+    "reference": "Product reference",
+    "about": "About TrueLabel",
+    "history": "History",
+    "help": "Help & Safety"
+  },
+  "verdict": {
+    "verdict1": "Registered and matches",
+    "verdict2": "Matches a NAFDAC alert",
+    "verdict3": "Number problem",
+    "verdict4": "Could not confirm",
+    "status1": "Registered and matches",
+    "status2": "Matches a NAFDAC alert",
+    "status3": "Number problem",
+    "status4": "Could not confirm",
+    "alert_match": "E match NAFDAC recall alert",
+    "registration_discrepancy": "Wetin dey pack different from record",
+    "could_not_confirm": "We no fit confirm am",
+    "registry_match": "E match NAFDAC record",
+    "caveat": "Person fit copy registered number put for pack wey no be am. This check only look wetin dey record, e no mean say wetin dey inside pure or safe.",
+    "pharmacistNotice": "If you get question about how to use this medicine, ask pharmacist. No change wetin dey the pack because of this app."
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "manifestVersion": "1.0.0",
+  "name": "TrueLabel Engineering Foundation Kit",
+  "authoritativeSpecification": "TrueLabel PRD v3.1 (Post-Audit Revision, 17 November 2026)",
+  "createdAt": "2026-11-17T20:33:00Z",
+  "summary": {
+    "totalFiles": 58,
+    "designSystemCssFiles": 9,
+    "designSystemDocFiles": 1,
+    "agentRules": 11,
+    "agentSkills": 12,
+    "architectureDocs": 5,
+    "designDocs": 5,
+    "engineeringDocs": 6,
+    "productGovernanceDocs": 4,
+    "rootFiles": 4
+  },
+  "categories": {
+    "root": [
+      { "path": "AGENTS.md", "description": "Permanent root directives and product governance rules for agents" },
+      { "path": "README.md", "description": "High-level foundation kit overview, quickstart, and engineering invariants" },
+      { "path": "KIT_MANIFEST.json", "description": "Machine-readable inventory of all foundation kit files and metadata" },
+      { "path": "PRD .md", "description": "Direct Markdown reference export of revised PRD v3.1" }
+    ],
+    "productSpecification": [
+      { "path": "docs/product/TrueLabel_PRD_v3.1_Post_Audit_Revision.docx", "description": "Primary authoritative DOCX specification (v3.1 Post-Audit Revision)" }
+    ],
+    "designSystem": [
+      { "path": "design-system/tokens.css", "description": "CSS custom properties: color, typography, 4px spacing, radii, elevation, verdict tokens" },
+      { "path": "design-system/reset.css", "description": "Modern accessible reset, focus-visible defaults, and reduced-motion overrides" },
+      { "path": "design-system/typography.css", "description": "Responsive typography scales, heading hierarchy, and monospace data styling" },
+      { "path": "design-system/layout.css", "description": "Mobile-first containers, stacks, clusters, and responsive grid primitives" },
+      { "path": "design-system/components.css", "description": "Buttons, surfaces, review fields, badges, and product-specific components" },
+      { "path": "design-system/forms.css", "description": "Form inputs, confirmation toggles, checkboxes, validation, and labels" },
+      { "path": "design-system/feedback.css", "description": "Toasts, inline banners, loaders, and 4 distinct verdict presentations" },
+      { "path": "design-system/utilities.css", "description": "Token-aligned atomic utility classes" },
+      { "path": "design-system/global.css", "description": "Master stylesheet importing all modular CSS layers in strict order" },
+      { "path": "design-system/README.md", "description": "Overview of the Evidence-first clarity design system and Tailwind integration" }
+    ],
+    "agentRules": [
+      { "path": ".agents/rules/product-safety.md", "trigger": "always_on", "description": "Core product safety boundaries, non-authentication stance, and medicine limits" },
+      { "path": ".agents/rules/architecture-and-stack.md", "trigger": "always_on", "description": "Approved tech stack, Next.js App Router, TypeScript, and Prisma standards" },
+      { "path": ".agents/rules/design-system.md", "trigger": "glob", "description": "UI, design tokens, responsive layout, and visual consistency" },
+      { "path": ".agents/rules/verdict-domain.md", "trigger": "glob", "description": "Deterministic verdict engine, priority precedence, and matching rules" },
+      { "path": ".agents/rules/ai-extraction.md", "trigger": "glob", "description": "Multimodal vision extraction, Zod validation, and injection resistance" },
+      { "path": ".agents/rules/medicine-label-only.md", "trigger": "glob", "description": "Medicine label-only display, zero dosing, and pharmacist notices" },
+      { "path": ".agents/rules/data-and-prisma.md", "trigger": "glob", "description": "Prisma schema constraints, foreign keys, indexes, and idempotent seeds" },
+      { "path": ".agents/rules/security-and-privacy.md", "trigger": "glob", "description": "Zero image persistence, HMAC identifiers, 30m/30d TTLs, and rate limiting" },
+      { "path": ".agents/rules/testing-and-evaluation.md", "trigger": "glob", "description": "Testing pyramid, golden fixtures, and fixed 80-image evaluation dataset" },
+      { "path": ".agents/rules/i18n-and-content.md", "trigger": "glob", "description": "Bilingual localization in English and Nigerian Pidgin (en/pcm)" },
+      { "path": ".agents/rules/devops-and-observability.md", "trigger": "glob", "description": "CI quality gates, Vercel deployments, spend caps, and PII-redacted logs" }
+    ],
+    "agentSkills": [
+      { "path": ".agents/skills/implement-design-system/SKILL.md", "name": "implement-design-system", "description": "Implements and extends Evidence-First Clarity CSS design tokens and components" },
+      { "path": ".agents/skills/build-scan-flow/SKILL.md", "name": "build-scan-flow", "description": "Guides Flow A camera capture, compression, extraction review, and verdict rendering" },
+      { "path": ".agents/skills/implement-verdict-engine/SKILL.md", "name": "implement-verdict-engine", "description": "Implements deterministic prioritized verdict selection and matching logic" },
+      { "path": ".agents/skills/integrate-ai-extraction/SKILL.md", "name": "integrate-ai-extraction", "description": "Integrates vision OCR, Zod schema validation, timeouts, and injection defense" },
+      { "path": ".agents/skills/implement-medicine-label-only/SKILL.md", "name": "implement-medicine-label-only", "description": "Enforces medicine label-only mode, direction fidelity, and pharmacist notices" },
+      { "path": ".agents/skills/nafdac-data-provenance/SKILL.md", "name": "nafdac-data-provenance", "description": "Curates official NAFDAC source records, coverage semantics, and alert evidence" },
+      { "path": ".agents/skills/secure-api-and-privacy/SKILL.md", "name": "secure-api-and-privacy", "description": "Implements API rate limits, zero photo persistence, HMAC hashes, and retention" },
+      { "path": ".agents/skills/prisma-migrations/SKILL.md", "name": "prisma-migrations", "description": "Manages Prisma schema, Neon connection poolers, indexes, and idempotent seeds" },
+      { "path": ".agents/skills/testing-and-evaluation/SKILL.md", "name": "testing-and-evaluation", "description": "Executes unit, integration, Playwright E2E, and 80-image evaluation harness" },
+      { "path": ".agents/skills/deploy-and-observe/SKILL.md", "name": "deploy-and-observe", "description": "Handles CI checks, Vercel deployments, instant rollbacks, and spend caps" },
+      { "path": ".agents/skills/i18n-english-pidgin/SKILL.md", "name": "i18n-english-pidgin", "description": "Governs English and Nigerian Pidgin translations and audio sign-off gates" },
+      { "path": ".agents/skills/accessibility-review/SKILL.md", "name": "accessibility-review", "description": "Audits UI components against WCAG 2.2 AA accessibility standards" }
+    ],
+    "technicalDocumentation": [
+      { "path": "docs/design/DESIGN_SYSTEM.md", "description": "Visual philosophy, tokens, typography, spacing, layout, components, and accessibility" },
+      { "path": "docs/design/DESIGN_DECISIONS.md", "description": "Catalog of PRD-mandated requirements vs proposals vs pending decisions" },
+      { "path": "docs/design/COMPONENT_INVENTORY.md", "description": "UI component catalog detailing variants, states, responsive patterns, and CSS" },
+      { "path": "docs/design/ACCESSIBILITY_GUIDELINES.md", "description": "WCAG 2.2 AA audit criteria, contrast ratios, focus visible, and non-color rules" },
+      { "path": "docs/design/DESIGN_TO_CODE.md", "description": "Implementation guide connecting CSS tokens to React 19, Tailwind, and Next.js" },
+      { "path": "docs/architecture/SYSTEM_ARCHITECTURE.md", "description": "End-to-end system context, component diagrams, and AI/deterministic boundaries" },
+      { "path": "docs/architecture/FRONTEND_ARCHITECTURE.md", "description": "Next.js App Router, RSC vs Client components, compression, and state flow" },
+      { "path": "docs/architecture/BACKEND_ARCHITECTURE.md", "description": "API routes, pure domain library, and fail-closed architecture" },
+      { "path": "docs/architecture/DATA_ARCHITECTURE.md", "description": "Neon PostgreSQL data architecture, Prisma schema, enums, and retention" },
+      { "path": "docs/architecture/SECURITY_ARCHITECTURE.md", "description": "Zero image persistence, PII minimization, HMAC hashing, and 30-day shares" },
+      { "path": "docs/engineering/IMPLEMENTATION_WORKFLOW.md", "description": "Standard 10-step engineering cycle for all feature development" },
+      { "path": "docs/engineering/CODING_STANDARDS.md", "description": "TypeScript strict mode, Zod validation, error patterns, and dependency rules" },
+      { "path": "docs/engineering/TESTING_STRATEGY.md", "description": "Testing pyramid, golden fixtures, and fixed 80-image evaluation dataset" },
+      { "path": "docs/engineering/DEPLOYMENT_RUNBOOK.md", "description": "Vercel deployment, Neon migrations, health checks, and instant rollbacks" },
+      { "path": "docs/engineering/ENVIRONMENT_CONFIGURATION.md", "description": "Environment variables catalog, secrets management, and dev/prod setup" },
+      { "path": "docs/engineering/OBSERVABILITY.md", "description": "PII-redacted logging standards, latency SLAs, Sentry, and spend caps" },
+      { "path": "docs/product-governance/PRD_TRACEABILITY.md", "description": "Bidirectional PRD v3.1 requirement traceability matrix" },
+      { "path": "docs/product-governance/SAFETY_REQUIREMENTS.md", "description": "Product safety boundaries, non-authentication stance, and medicine restrictions" },
+      { "path": "docs/product-governance/RELEASE_CHECKLIST.md", "description": "Mandatory pre-release gates and verification checklist" },
+      { "path": "docs/product-governance/DECISION_REGISTER.md", "description": "Register of 15 open questions/blockers (B-01 to B-15) with owners and defaults" }
+    ]
+  }
+}
