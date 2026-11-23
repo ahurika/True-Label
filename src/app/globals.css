@@ -1,0 +1,10 @@
+/* ============================================================
+   TRUELABEL GLOBAL STYLESHEET (App Entrypoint)
+   Integrates the TrueLabel Design System with Tailwind CSS
+   ============================================================ */
+
+@import '../../design-system/global.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

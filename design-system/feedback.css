@@ -1,0 +1,254 @@
+/* ============================================================
+   TRUELABEL FEEDBACK
+   Toasts, inline banners, loaders, state blocks, error messages,
+   skeleton placeholders, overlays, bottom sheets, dialogs.
+   ============================================================ */
+
+/* ── State block (empty / error / blocking states) ───────── */
+
+.tl-state-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--space-6) var(--space-3);
+  gap: var(--space-2);
+}
+
+.tl-state-block-icon {
+  width: var(--size-icon-lg);
+  height: var(--size-icon-lg);
+  color: var(--color-text-muted);
+}
+
+.tl-state-block-title {
+  font-size: var(--text-title-3);
+  line-height: var(--lh-title-3);
+  font-weight: var(--fw-title-3);
+  color: var(--color-text);
+}
+
+.tl-state-block-body {
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
+  color: var(--color-text-muted);
+  max-width: 32ch;
+}
+
+/* ── Error message ───────────────────────────────────────── */
+
+.tl-error-message {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  border: 1px solid var(--color-verdict-status-3-border);
+  border-radius: var(--radius-control);
+  background-color: var(--color-verdict-status-3-bg);
+  color: var(--color-verdict-status-3-text);
+}
+
+.tl-error-message-text {
+  font-size: var(--text-caption);
+  line-height: var(--lh-caption);
+}
+
+/* ── Loading indicator ───────────────────────────────────── */
+
+.tl-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-6) var(--space-3);
+}
+
+.tl-loading-spinner {
+  width: var(--size-icon-lg);
+  height: var(--size-icon-lg);
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: tl-spin 0.8s linear infinite;
+}
+
+@keyframes tl-spin {
+  to { transform: rotate(360deg); }
+}
+
+.tl-loading-text {
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
+  color: var(--color-text-muted);
+}
+
+/* ── Progress stages ─────────────────────────────────────── */
+
+.tl-stage-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) 0;
+  font-size: var(--text-label);
+  line-height: var(--lh-label);
+  color: var(--color-text-muted);
+}
+
+.tl-stage-item[data-state="current"] {
+  color: var(--color-primary);
+  font-weight: var(--fw-label-bold);
+}
+
+.tl-stage-item[data-state="done"] {
+  color: var(--color-text);
+}
+
+/* ── Skeleton ────────────────────────────────────────────── */
+
+.tl-skeleton-line {
+  height: var(--space-2);
+  background: linear-gradient(
+    90deg,
+    var(--color-surface) 25%,
+    var(--color-surface-sunken) 50%,
+    var(--color-surface) 75%
+  );
+  background-size: 200% 100%;
+  animation: tl-shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-1);
+}
+
+.tl-skeleton-card {
+  height: calc(var(--space-10) + var(--space-4));
+  background: linear-gradient(
+    90deg,
+    var(--color-surface) 25%,
+    var(--color-surface-sunken) 50%,
+    var(--color-surface) 75%
+  );
+  background-size: 200% 100%;
+  animation: tl-shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-card);
+}
+
+@keyframes tl-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Toast ───────────────────────────────────────────────── */
+
+.tl-toast {
+  position: fixed;
+  bottom: calc(var(--size-nav) + var(--space-2));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--z-toast);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-3);
+  min-height: var(--size-target);
+  border-radius: var(--radius-pill);
+  background-color: var(--color-text);
+  color: var(--color-text-inverse);
+  font-size: var(--text-label);
+  line-height: var(--lh-label);
+  font-weight: var(--fw-label);
+  box-shadow: var(--shadow-float);
+}
+
+/* ── Scrim / Overlay ─────────────────────────────────────── */
+
+.tl-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-sheet);
+  background-color: var(--color-overlay);
+}
+
+/* ── Bottom sheet ────────────────────────────────────────── */
+
+.tl-bottom-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: calc(var(--z-sheet) + 1);
+  background-color: var(--color-page);
+  border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+  box-shadow: var(--shadow-sheet);
+  padding: var(--space-2) var(--space-2) var(--space-4);
+  max-height: 85dvh;
+  overflow-y: auto;
+}
+
+.tl-bottom-sheet-grabber {
+  width: var(--size-grabber-w);
+  height: var(--size-grabber-h);
+  margin: 0 auto var(--space-2);
+  background-color: var(--color-border);
+  border-radius: var(--radius-pill);
+}
+
+/* ── Dialog / modal ──────────────────────────────────────── */
+
+.tl-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: var(--z-dialog);
+  width: min(calc(100vw - var(--space-4)), var(--container-sm));
+  background-color: var(--color-page);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-float);
+  padding: var(--space-3);
+}
+
+.tl-dialog-title {
+  font-size: var(--text-title-3);
+  line-height: var(--lh-title-3);
+  font-weight: var(--fw-title-3);
+  margin-bottom: var(--space-1);
+}
+
+.tl-dialog-body {
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-3);
+}
+
+.tl-dialog-actions {
+  display: flex;
+  gap: var(--space-1);
+  justify-content: flex-end;
+}
+
+/* ── Audio availability notice ───────────────────────────── */
+
+.tl-audio-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  background-color: var(--color-surface);
+  font-size: var(--text-caption);
+  line-height: var(--lh-caption);
+  color: var(--color-text-muted);
+}
+
+/* ── Copied-number caveat (non-dismissible) ──────────────── */
+
+.tl-caveat {
+  padding: var(--space-2);
+  border-left: 3px solid var(--color-border-strong);
+  background-color: var(--color-surface);
+  font-size: var(--text-caption);
+  line-height: var(--lh-caption);
+  color: var(--color-text-muted);
+  font-style: italic;
+}

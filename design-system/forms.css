@@ -1,0 +1,150 @@
+/* ============================================================
+   TRUELABEL FORMS
+   Form inputs, labels, validation, registration number field,
+   search guidance, confirmation toggles.
+   ============================================================ */
+
+/* ── Form field wrapper ──────────────────────────────────── */
+
+.tl-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-half);
+}
+
+.tl-field-label {
+  font-size: var(--text-label);
+  line-height: var(--lh-label);
+  font-weight: var(--fw-label-bold);
+  color: var(--color-text);
+}
+
+.tl-field-hint {
+  font-size: var(--text-caption);
+  line-height: var(--lh-caption);
+  color: var(--color-text-muted);
+}
+
+.tl-field-error {
+  font-size: var(--text-caption);
+  line-height: var(--lh-caption);
+  color: var(--color-verdict-status-3-text);
+}
+
+/* ── Text input ──────────────────────────────────────────── */
+
+.tl-input {
+  height: var(--size-field);
+  padding: var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  background-color: var(--color-page);
+  color: var(--color-text);
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
+  transition: border-color var(--duration-fast) var(--easing-default);
+}
+
+.tl-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.tl-input:hover {
+  border-color: var(--color-border-strong);
+}
+
+.tl-input:focus {
+  border-color: var(--color-primary);
+  outline: var(--focus-ring-width) solid var(--color-focus);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.tl-input[aria-invalid="true"],
+.tl-input.error {
+  border-color: var(--color-verdict-status-3-border);
+}
+
+.tl-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Registration number input (special treatment) ───────── */
+
+.tl-reg-input {
+  height: var(--size-target-lg);
+  padding: var(--space-2) var(--space-3);
+  border: 2px solid var(--color-border-strong);
+  border-radius: var(--radius-control);
+  background-color: var(--color-page);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: var(--text-code);
+  line-height: var(--lh-code);
+  font-weight: var(--fw-code);
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  transition: border-color var(--duration-fast) var(--easing-default);
+}
+
+.tl-reg-input:focus {
+  border-color: var(--color-primary);
+  outline: var(--focus-ring-width) solid var(--color-focus);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* ── Search field ────────────────────────────────────────── */
+
+.tl-search {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  height: var(--size-field);
+  padding: 0 var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  background-color: var(--color-page);
+}
+
+.tl-search-input {
+  flex: 1;
+  border: none;
+  background: none;
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
+  color: var(--color-text);
+  outline: none;
+}
+
+.tl-search-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.tl-search-icon {
+  flex-shrink: 0;
+  width: var(--size-icon);
+  height: var(--size-icon);
+  color: var(--color-text-muted);
+}
+
+/* ── Textarea ────────────────────────────────────────────── */
+
+.tl-textarea {
+  min-height: calc(var(--size-field) * 2);
+  padding: var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  background-color: var(--color-page);
+  color: var(--color-text);
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
+  resize: vertical;
+  transition: border-color var(--duration-fast) var(--easing-default);
+}
+
+.tl-textarea:focus {
+  border-color: var(--color-primary);
+  outline: var(--focus-ring-width) solid var(--color-focus);
+  outline-offset: var(--focus-ring-offset);
+}
