@@ -23,7 +23,7 @@ describe('Curated Registry & Alert Repository Layer', () => {
     });
 
     it('finds active medicine record by registration number', async () => {
-      const record = await findRegistryRecord('04-1234', 'medicine');
+      const record = await findRegistryRecord('04-0411', 'medicine');
       expect(record).not.toBeNull();
       expect(record?.brand).toBe('Emzor');
       expect(record?.category).toBe('medicine');

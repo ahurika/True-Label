@@ -78,7 +78,8 @@ export async function POST(req: NextRequest) {
     }
 
     // Vision extraction check
-    const apiKey = process.env.GEMINI_API_KEY;
+    const rawApiKey = process.env.GEMINI_API_KEY;
+    const apiKey = rawApiKey ? rawApiKey.replace(/^["']|["']$/g, '').trim() : '';
     if (!apiKey) {
       return NextResponse.json(
         {
@@ -114,42 +115,72 @@ Extract printed pack text accurately and output strictly valid JSON matching the
   "confidenceScore": 0.0 to 1.0
 }`;
 
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    const modelsToTry = [
+      process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite',
+      'gemini-3.5-flash',
+    ];
 
-    const aiRes = await fetch(geminiUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
-              { text: prompt },
+    let aiRes: Response | null = null;
+    let lastErrorMsg = '';
+
+    for (const model of modelsToTry) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+      const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+      try {
+        const res = await fetch(geminiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          signal: controller.signal,
+          body: JSON.stringify({
+            contents: [
               {
-                inlineData: {
-                  mimeType: 'image/jpeg',
-                  data: imageBase64,
-                },
+                parts: [
+                  { text: prompt },
+                  {
+                    inlineData: {
+                      mimeType: 'image/jpeg',
+                      data: imageBase64,
+                    },
+                  },
+                ],
               },
             ],
-          },
-        ],
-        generationConfig: {
-          response_mime_type: 'application/json',
-          temperature: 0.1,
-        },
-      }),
-    });
+            generationConfig: {
+              response_mime_type: 'application/json',
+              temperature: 0.1,
+            },
+          }),
+        });
 
-    if (!aiRes.ok) {
-      const errText = await aiRes.text();
-      console.error('[POST /api/scans] AI Vision provider error:', errText);
+        clearTimeout(timeoutId);
+
+        if (res.ok) {
+          aiRes = res;
+          break;
+        } else {
+          const errData = await res.json().catch(() => ({}));
+          lastErrorMsg = errData.error?.message || `HTTP ${res.status}`;
+          console.warn(`[Scans API] Gemini model ${model} failed (${res.status}):`, lastErrorMsg);
+        }
+      } catch (err: unknown) {
+        clearTimeout(timeoutId);
+        const isAbort = (err as Error)?.name === 'AbortError';
+        lastErrorMsg = isAbort
+          ? 'Request timed out after 15 seconds'
+          : ((err as Error)?.message || 'Fetch failed');
+        console.warn(`[Scans API] Gemini model ${model} request error:`, lastErrorMsg);
+      }
+    }
+
+    if (!aiRes) {
       return NextResponse.json(
         {
-          code: 'EXTRACTION_FAILED',
-          message: 'The multimodal extraction service encountered an error.',
-          retryable: true,
+          success: false,
+          status: 'error',
           scanId: scan.id,
-          requestId: scan.id,
+          message: `Vision extraction service unavailable: ${lastErrorMsg}. Please enter pack details manually.`,
+          canFallbackToManual: true,
         },
         { status: 502 }
       );

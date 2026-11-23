@@ -119,6 +119,12 @@ export interface ConfirmedPackInput {
   isManuallyEntered?: boolean;
 }
 
+export type EvidenceClassification =
+  | 'independently_verified_official'
+  | 'historical_official_record'
+  | 'synthetic_test_fixture'
+  | 'unverified_record';
+
 export interface MatchedAlertEvidence {
   alertId: string;
   alertNumber: string;
@@ -131,6 +137,12 @@ export interface MatchedAlertEvidence {
   officialSourceUrl?: string;
   retrievedAt?: string;
   lastReviewDate?: string;
+  verifiedAt?: string;
+  verifiedBy?: string;
+  evidenceClassification?: EvidenceClassification;
+  isSyntheticFixture?: boolean;
+  isVerifiedOfficial?: boolean;
+  isProductionEligible?: boolean;
 }
 
 export interface RegistryRecordEvidence {
@@ -147,9 +159,15 @@ export interface RegistryRecordEvidence {
   sourceUrl?: string;
   retrievedAt?: string;
   lastVerifiedAt?: string;
+  verifiedAt?: string;
+  verifiedBy?: string;
   registeredUntil?: string;
   isExpired?: boolean;
   fieldProvenance?: Record<string, string>;
+  isSyntheticFixture?: boolean;
+  isVerifiedOfficial?: boolean;
+  evidenceClassification?: EvidenceClassification;
+  isProductionEligible?: boolean;
 }
 
 export interface EvidenceReference {

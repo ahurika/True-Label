@@ -26,7 +26,8 @@ export async function POST(req: NextRequest) {
       imageBase64 = json.imageBase64 || '';
     }
 
-    const apiKey = process.env.GEMINI_API_KEY;
+    const rawApiKey = process.env.GEMINI_API_KEY;
+    const apiKey = rawApiKey ? rawApiKey.replace(/^["']|["']$/g, '').trim() : '';
 
     // If Gemini API Key is missing:
     if (!apiKey) {
@@ -59,23 +60,31 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Call Gemini Vision API with 15-second timeout
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000);
+    const modelsToTry = [
+      process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite',
+      'gemini-3.5-flash',
+    ];
 
-    try {
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          signal: controller.signal,
-          body: JSON.stringify({
-            contents: [
-              {
-                parts: [
-                  {
-                    text: `You are an expert OCR and packaging reading engine for Nigerian consumer goods and medicines.
+    let response: Response | null = null;
+    let lastError = '';
+
+    for (const model of modelsToTry) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+      try {
+        const res = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            signal: controller.signal,
+            body: JSON.stringify({
+              contents: [
+                {
+                  parts: [
+                    {
+                      text: `You are an expert OCR and packaging reading engine for Nigerian consumer goods and medicines.
 Extract printed text from this packaging image into strict JSON matching this schema:
 {
   "registrationNumber": "printed NAFDAC registration number (e.g. 01-0812, 04-1234, A0-1234)",
@@ -89,69 +98,65 @@ Extract printed text from this packaging image into strict JSON matching this sc
   "category": "one of: medicine, food, beverage, water, cosmetic, toothpaste, device, herbal, household, other"
 }
 Output strictly valid JSON with no markdown wrapping or additional text.`,
-                  },
-                  {
-                    inlineData: {
-                      mimeType: 'image/jpeg',
-                      data: imageBase64,
                     },
-                  },
-                ],
-              },
-            ],
-          }),
+                    {
+                      inlineData: {
+                        mimeType: 'image/jpeg',
+                        data: imageBase64,
+                      },
+                    },
+                  ],
+                },
+              ],
+            }),
+          }
+        );
+
+        clearTimeout(timeoutId);
+
+        if (res.ok) {
+          response = res;
+          break;
+        } else {
+          const errData = await res.json().catch(() => ({}));
+          lastError = errData.error?.message || `HTTP ${res.status}`;
+          console.warn(`[Extract API] Model ${model} returned error:`, lastError);
         }
-      );
-
-      clearTimeout(timeoutId);
-
-      if (response.status === 429) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: 'RATE_LIMIT_EXCEEDED',
-            message: 'AI Vision provider rate limit reached. Please wait a moment or enter pack details manually.',
-            canFallbackToManual: true,
-          },
-          { status: 429 }
-        );
+      } catch (err: unknown) {
+        clearTimeout(timeoutId);
+        lastError = (err as Error)?.message || 'Fetch error';
+        console.warn(`[Extract API] Model ${model} failed:`, lastError);
       }
-
-      if (!response.ok) {
-        throw new Error(`Gemini API returned status ${response.status}`);
-      }
-
-      const result = await response.json();
-      const rawText = result.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (!rawText) {
-        throw new Error('Gemini API returned empty text');
-      }
-
-      const cleanJsonText = rawText.replace(/```json\n?|```/g, '').trim();
-      const parsed = JSON.parse(cleanJsonText);
-      const validated = ExtractionSchema.parse(parsed);
-
-      return NextResponse.json({
-        success: true,
-        data: validated,
-        source: 'gemini-vision',
-        isLiveAi: true,
-      });
-    } catch (fetchErr: unknown) {
-      clearTimeout(timeoutId);
-      if ((fetchErr as Error)?.name === 'AbortError') {
-        return NextResponse.json(
-          {
-            success: false,
-            error: 'PROVIDER_TIMEOUT',
-            message: 'AI Vision provider timed out after 15 seconds. Please enter pack details manually.',
-            canFallbackToManual: true,
-          },
-          { status: 504 }
-        );
-      }
-      throw fetchErr;
     }
+
+    if (!response) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'AI_SERVICE_UNAVAILABLE',
+          message: `Vision service unavailable: ${lastError}. Please enter pack details manually.`,
+          canFallbackToManual: true,
+        },
+        { status: 502 }
+      );
+    }
+
+    const result = await response.json();
+    const rawText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!rawText) {
+      throw new Error('Gemini API returned empty text');
+    }
+
+    const cleanJsonText = rawText.replace(/```json\n?|```/g, '').trim();
+    const parsed = JSON.parse(cleanJsonText);
+    const validated = ExtractionSchema.parse(parsed);
+
+    return NextResponse.json({
+      success: true,
+      data: validated,
+      source: 'gemini-vision',
+      isLiveAi: true,
+    });
   } catch (err: unknown) {
     console.error('[Extraction] Unhandled error:', err);
     return NextResponse.json(
